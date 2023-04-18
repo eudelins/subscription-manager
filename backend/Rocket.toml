@@ -1,0 +1,2 @@
+[default.databases.subscriptions]
+url = "./database/subscriptions.db"
