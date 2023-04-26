@@ -1,2 +1,9 @@
-[default.databases.subscriptions]
-url = "./database/subscriptions.db"
+[default.databases.subscriptions_db]
+url = "postgresql://subscriptions_db_user:admin@localhost/subscriptions_db"
+
+[release]
+address = "0.0.0.0"
+
+[release.databases.subscriptions_db]
+url = "postgresql://subscriptions_db_user:admin@db:5432/subscriptions_db"
+
