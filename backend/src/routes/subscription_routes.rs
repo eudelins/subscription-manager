@@ -13,10 +13,7 @@ pub async fn find_subscription(
     db: Connection<SubscriptionsDb>,
     id: i32
 ) -> Option<Json<SimpleSubscriptionDTO>> {
-    match subscription_service.find_subscription(db, id).await {
-        Some(subscription) => Some(Json(subscription)),
-        None => None,
-    }
+    subscription_service.find_subscription(db, id).await.map(Json)
 }
 
 #[get("/")]
