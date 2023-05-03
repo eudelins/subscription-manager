@@ -37,3 +37,32 @@ chmod 0600 $PGPASSFILE  # Restrict access write to the file
 psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/init_table.sql
 psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/fill_db.sql
 ```
+<br>
+
+
+## Frontend init
+
+### Configure .env variables
+
+Create a file named .env.dev and write VITE_BASEURL = "http://localhost:8000/".
+
+
+### Linter
+
+Follow https://dev.to/knowankit/setup-eslint-and-prettier-in-react-app-357b
+
+Usage :
+
+```bash
+yarn lint
+yarn lint --fix
+```
+
+
+### Start frontend
+
+```bash
+cd frontend
+yarn install
+yarn run dev
+```
