@@ -18,7 +18,7 @@ impl Fairing for CORS {
         response.set_header(Header::new("Access-Control-Allow-Origin", "http://localhost:1420"));
         response.set_header(Header::new(
             "Access-Control-Allow-Methods",
-            "POST, GET, PATCH, OPTIONS",
+            "POST, GET, DELETE, PATCH, OPTIONS",
         ));
     }
 }
