@@ -1,6 +1,9 @@
 [default.databases.subscriptions_db]
 url = "postgresql://subscriptions_db_user:admin@localhost/subscriptions_db"
 
+[test.databases.subscriptions_db]
+url = "postgresql://subscriptions_db_user:admin@localhost/subscriptions_db_test"
+
 [release]
 address = "0.0.0.0"
 

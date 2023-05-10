@@ -19,6 +19,7 @@ sudo -u postgres createuser subscriptions_db_user -P -l
 # Enter password
 
 sudo -u postgres createdb subscriptions_db -O subscriptions_db_user
+sudo -u postgres createdb subscriptions_db_test -O subscriptions_db_user
 ```
 
 
@@ -36,6 +37,9 @@ chmod 0600 $PGPASSFILE  # Restrict access write to the file
 ```bash
 psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/init_table.sql
 psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/fill_db.sql
+
+psql -d subscriptions_db_test -U subscriptions_db_user -a -f ./backend/database/init_table.sql
+psql -d subscriptions_db_test -U subscriptions_db_user -a -f ./backend/database/fill_test_db.sql
 ```
 <br>
 
