@@ -1,6 +1,7 @@
 import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
+import { Link } from 'react-router-dom';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -21,9 +22,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('Gestion des abonnements', '1', <PieChartOutlined />),
-  getItem('Visualisation', '2', <DesktopOutlined />),
-  getItem('Personnalisation', '3', <ContainerOutlined />)
+  getItem(<Link to={`subscriptions/`}>Gestion des abonnements</Link>, '1', <PieChartOutlined />),
+  getItem(<Link to={`data/`}>Visualisation</Link>, '2', <DesktopOutlined />),
+  getItem(<Link to={`customization/`}>Personnalisation</Link>, '3', <ContainerOutlined />)
 ];
 
 function Sidebar() {
