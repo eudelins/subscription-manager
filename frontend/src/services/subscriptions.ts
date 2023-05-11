@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-import Subscriptions from '../interfaces/subscriptions/subscription.interface';
+import Subscription from '../interfaces/subscriptions/subscription.interface';
 import { SUBSCRIPTIONS_PATH } from './utils/path';
 
-export async function getAllSubscriptions(): Promise<Subscriptions[]> {
-  const subscriptions = await axios.get(SUBSCRIPTIONS_PATH);
+export async function getAllSubscriptions(): Promise<Subscription[]> {
+  const subscriptions = await axios.get<Subscription[]>(SUBSCRIPTIONS_PATH);
   return subscriptions.data;
 }
