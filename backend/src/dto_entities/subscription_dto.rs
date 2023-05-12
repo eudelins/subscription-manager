@@ -10,9 +10,8 @@ pub struct SubscriptionDTO {
     pub status: bool,
 }
 
-
-impl SubscriptionDTO {
-    pub fn build_from_dao(sub_dao: SubscriptionDAO) -> SubscriptionDTO {
+impl From<SubscriptionDAO> for SubscriptionDTO {
+    fn from(sub_dao: SubscriptionDAO) -> Self {
         SubscriptionDTO {
             id: sub_dao.id,
             name: sub_dao.name,
@@ -20,4 +19,13 @@ impl SubscriptionDTO {
             status: sub_dao.status
         }
     }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CreateSubscriptionDTO {
+    pub name: String,
+    pub brand_id: i32,
+    pub price: f32,
+    pub status: bool,
+    pub categories_id: Vec<i32>,
 }
