@@ -16,19 +16,21 @@ local   all             all                                     scram-sha-256
 
 ```bash
 sudo -u postgres createuser subscriptions_db_user -P -l
-# Enter password
+# Enter the subscriptions_db_user password you want
 
 sudo -u postgres createdb subscriptions_db -O subscriptions_db_user
 sudo -u postgres createdb subscriptions_db_test -O subscriptions_db_user
 ```
 
 
-### Write the created user password in a pass.pgpass file
+### Write the created user password in a pass.pgpass file and the .env.production.db file
 
 ```bash
 export PGPASSFILE=./backend/database/pass.pgpass
 echo "*:*:*:subscriptions_db_user:<password>" > $PGPASSFILE
 chmod 0600 $PGPASSFILE  # Restrict access write to the file
+
+echo "DB_USER_PASSWORD=<password>" > .env.production.db
 ```
 
 
