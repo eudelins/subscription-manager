@@ -9,8 +9,8 @@ pub struct BrandDTO {
     pub logo: Option<String>,
 }
 
-impl BrandDTO {
-    pub fn build_from_dao(brand_dao: BrandDAO) -> BrandDTO {
+impl From<BrandDAO> for BrandDTO {
+    fn from(brand_dao: BrandDAO) -> Self {
         BrandDTO {
             id: brand_dao.id,
             name: brand_dao.name,

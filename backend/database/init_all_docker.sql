@@ -26,12 +26,13 @@ CREATE TABLE Subscriptions (
     unsubscribe_link VARCHAR(255),
     start_date DATE,
     end_date DATE,
-    FOREIGN KEY (brand_id) REFERENCES Brands(id)
+    FOREIGN KEY (brand_id) REFERENCES Brands(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE Categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL
+    name VARCHAR(50) NOT NULL,
+    icon VARCHAR(255)
 );
 
 
@@ -40,10 +41,10 @@ CREATE TABLE Categories (
 CREATE TABLE Belongs_To_Categories (
     subscription_id SERIAL,
     category_id SERIAL,
-    FOREIGN KEY (subscription_id) REFERENCES Subscriptions(id), 
-    FOREIGN KEY (category_id) REFERENCES Categories(id),
+    FOREIGN KEY (subscription_id) REFERENCES Subscriptions(id) ON DELETE CASCADE, 
+    FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE,
     PRIMARY KEY (subscription_id, category_id)
-);
+)
 
 
 INSERT INTO Brands (name) VALUES
