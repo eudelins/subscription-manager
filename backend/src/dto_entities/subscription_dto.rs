@@ -16,7 +16,30 @@ impl From<SubscriptionDAO> for SubscriptionDTO {
             id: sub_dao.id,
             name: sub_dao.name,
             price: sub_dao.price,
-            status: sub_dao.status
+            status: sub_dao.status,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct EntireSubscriptionDTO {
+    pub id: i32,
+    pub brand_id: i32,
+    pub name: String,
+    pub price: f32,
+    pub status: bool,
+    pub categories_id: Vec<i32>,
+}
+
+impl From<SubscriptionDAO> for EntireSubscriptionDTO {
+    fn from(sub_dao: SubscriptionDAO) -> Self {
+        EntireSubscriptionDTO {
+            id: sub_dao.id,
+            brand_id: sub_dao.brand_id,
+            name: sub_dao.name,
+            price: sub_dao.price,
+            status: sub_dao.status,
+            categories_id: vec![]
         }
     }
 }
