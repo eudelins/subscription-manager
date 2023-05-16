@@ -34,7 +34,7 @@ pub async fn create_brand(mut db: Connection<SubscriptionsDb>, new_brand: BrandD
     .ok()
 }
 
-pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) {
+pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
     sqlx::query(
         "DELETE FROM Brands WHERE id = $1;"
     )
@@ -43,5 +43,5 @@ pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) {
         println!("Successful delete: {} row affected", res.rows_affected())
     })
     .map_err(|e| println!("Error: {:?}", e))
-    .ok();
+    .ok()
 }

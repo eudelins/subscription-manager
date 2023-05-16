@@ -21,6 +21,6 @@ pub async fn create_brand(db: Connection<SubscriptionsDb>, new_brand_dto: BrandD
     brand_repository::create_brand(db, new_brand).await.map(BrandDTO::from)
 }
 
-pub async fn delete_brand_by_id(db: Connection<SubscriptionsDb>, id: i32) {
+pub async fn delete_brand_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
     brand_repository::delete_brand_by_id(db, id).await
 }
