@@ -57,9 +57,9 @@ pub async fn add_subscription_to_category(
     )
     .bind(sub_id)
     .bind(category_id)
-    .execute(&mut **db).await.map(|res| {
-        println!("Successful delete: {} row affected", res.rows_affected())
-    })
-    .map_err(|e| println!("Error: {:?}", e))
+    .execute(&mut **db).await
+    .map_err(|e| println!("Error while adding sub to category: {:?}", e))
     .ok()
+    .filter(|res| res.rows_affected() == 1)
+    .map(|_| ())
 }
