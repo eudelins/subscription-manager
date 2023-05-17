@@ -39,9 +39,9 @@ pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) ->
         "DELETE FROM Brands WHERE id = $1;"
     )
     .bind(id)
-    .execute(&mut *db).await.map(|res| {
-        println!("Successful delete: {} row affected", res.rows_affected())
-    })
-    .map_err(|e| println!("Error: {:?}", e))
+    .execute(&mut *db).await
+    .map_err(|e| println!("Error while deleting brand: {:?}", e))
     .ok()
+    .filter(|res| res.rows_affected() == 1)
+    .map(|_| ())
 }

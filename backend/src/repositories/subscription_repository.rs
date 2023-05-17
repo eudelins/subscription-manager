@@ -43,11 +43,11 @@ pub async fn delete_subscription_by_id(db: &mut Connection<SubscriptionsDb>, id:
         "DELETE FROM Subscriptions WHERE id = $1;"
     )
     .bind(id)
-    .execute(&mut **db).await.map(|res| {
-        println!("Successful delete: {} row affected", res.rows_affected())
-    })
-    .map_err(|e| println!("Error: {:?}", e))
+    .execute(&mut **db).await
+    .map_err(|e| println!("Error while deleting subscription: {:?}", e))
     .ok()
+    .filter(|res| res.rows_affected() == 1)
+    .map(|_| ())
 }
 
 pub async fn fetch_subscription_categories_id(db: &mut Connection<SubscriptionsDb>, id: i32) -> Vec<i32> {
