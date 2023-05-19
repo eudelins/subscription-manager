@@ -1,3 +1,4 @@
+import { ReactNode, Key } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CUSTOMIZATION_ROUTE,
@@ -12,9 +13,9 @@ import type { MenuProps } from 'antd';
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
-  label: React.ReactNode,
-  key: React.Key,
-  icon?: React.ReactNode,
+  label: ReactNode,
+  key: Key,
+  icon?: ReactNode,
   children?: MenuItem[],
   type?: 'group'
 ): MenuItem {
