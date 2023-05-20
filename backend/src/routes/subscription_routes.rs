@@ -1,5 +1,5 @@
 use crate::services::subscription_service;
-use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateSubscriptionDTO, EntireSubscriptionDTO};
+use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateOrUpdateSubscriptionDTO, EntireSubscriptionDTO};
 use crate::SubscriptionsDb;
 
 use rocket_db_pools::Connection;
@@ -24,9 +24,25 @@ pub async fn find_all_subscriptions(
 #[post("/", format = "application/json", data = "<new_sub>")]
 pub async fn create_subscription(
     db: Connection<SubscriptionsDb>,
-    new_sub: Json<CreateSubscriptionDTO>
+    new_sub: Json<CreateOrUpdateSubscriptionDTO>
 ) -> Option<Json<SubscriptionDTO>> {
-    subscription_service::create_subscription(db, new_sub.into_inner()).await.map(Json)
+    subscription_service::create_or_update_subscription(
+        db,
+        new_sub.into_inner(),
+        false
+    ).await.map(Json)
+}
+
+#[put("/", format = "application/json", data = "<updated_sub>")]
+pub async fn update_subscription(
+    db: Connection<SubscriptionsDb>,
+    updated_sub: Json<CreateOrUpdateSubscriptionDTO>
+) -> Option<Json<SubscriptionDTO>> {
+    subscription_service::create_or_update_subscription(
+        db,
+        updated_sub.into_inner(),
+        true
+    ).await.map(Json)
 }
 
 #[delete("/<id>")]
@@ -79,7 +95,10 @@ mod test {
     #[test]
     fn create_subscription_find_by_id_and_delete_by_id_test() {
         let client = get_test_client().lock().unwrap();
-        let new_subscription = CreateSubscriptionDTO {
+
+        // Create new sub
+        let new_subscription = CreateOrUpdateSubscriptionDTO {
+            id: Option::None,
             name: String::from("test_new_subscription"),
             brand_id: 1,
             price: 7.99,
@@ -91,13 +110,12 @@ mod test {
             .body(to_string(&new_subscription).expect("Deserealization failed"))
             .dispatch();
         assert_eq!(response.status(), Status::Ok);
-        
         let subscription = response.into_json::<SubscriptionDTO>().unwrap();
         assert_eq!(subscription.name, "test_new_subscription");
         assert_eq!(subscription.price, 7.99);
         assert_eq!(subscription.status, true);
 
-        
+        // Check with fetch
         let response = client.get(format!("/subscriptions/{}", subscription.id))
             .dispatch();
         assert_eq!(response.status(), Status::Ok);
@@ -106,8 +124,68 @@ mod test {
         assert_eq!(subscription.price, 7.99);
         assert_eq!(subscription.status, true);
 
+        // Clean by delete
         let response = client.delete(format!("/subscriptions/{}", subscription.id))
             .dispatch();
         assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn update_subscription_twice_and_find_by_id_test() {
+        let client = get_test_client().lock().unwrap();
+
+        // Update
+        let new_subscription = CreateOrUpdateSubscriptionDTO {
+            id: Some(1),
+            name: String::from("test_update"),
+            brand_id: 1,
+            price: 12.99,
+            status: true,
+            categories_id: vec![1]
+        };
+        let response = client.put(uri!("/subscriptions", super::update_subscription))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&new_subscription).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<SubscriptionDTO>().unwrap();
+        assert_eq!(subscription.name, "test_update");
+        assert_eq!(subscription.price, 12.99);
+        assert_eq!(subscription.status, true);
+        
+        // Check with fetch
+        let response = client.get(format!("/subscriptions/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.id, 1);
+        assert_eq!(subscription.name, "test_update");
+        assert_eq!(subscription.price, 12.99);
+        assert_eq!(subscription.status, true);
+        assert_eq!(subscription.categories_id, vec![1]);
+
+        // Go back to as it was
+        let original_sub = CreateOrUpdateSubscriptionDTO {
+            id: Some(1),
+            name: String::from("Prime Video"),
+            brand_id: 1,
+            price: 10.1,
+            status: false,
+            categories_id: vec![1, 2]
+        };
+        let response = client.put(uri!("/subscriptions", super::update_subscription))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&original_sub).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Check with fetch
+        let response = client.get(format!("/subscriptions/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.id, 1);
+        assert_eq!(subscription.name, "Prime Video");
+        assert_eq!(subscription.price, 10.1);
+        assert_eq!(subscription.status, false);
+        assert_eq!(subscription.categories_id, vec![1, 2]);
     }
 }

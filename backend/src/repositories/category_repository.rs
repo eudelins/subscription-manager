@@ -4,6 +4,7 @@ use crate::dao_entities::category_dao::CategoryDAO;
 use rocket_db_pools::Connection;
 use rocket_db_pools::sqlx;
 use sqlx::FromRow;
+use sqlx::PgExecutor;
 
 
 pub async fn find_all_categories(mut db: Connection<SubscriptionsDb>) -> Vec<CategoryDAO> {
@@ -48,7 +49,7 @@ pub async fn delete_category_by_id(mut db: Connection<SubscriptionsDb>, id: i32)
 }
 
 pub async fn add_subscription_to_category(
-    db: &mut Connection<SubscriptionsDb>,
+    db_conn: impl PgExecutor<'_>,
     sub_id: i32,
     category_id: i32
 ) -> Option<()> {
@@ -57,7 +58,7 @@ pub async fn add_subscription_to_category(
     )
     .bind(sub_id)
     .bind(category_id)
-    .execute(&mut **db).await
+    .execute(db_conn).await
     .map_err(|e| println!("Error while adding sub to category: {:?}", e))
     .ok()
     .filter(|res| res.rows_affected() == 1)
