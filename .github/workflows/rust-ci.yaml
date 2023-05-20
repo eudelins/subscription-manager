@@ -7,15 +7,17 @@ on:
   push:
 
 jobs:
-  build:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
-
       - name: Check out code
         uses: actions/checkout@v2
+
+      - name: Configure cargo / rust env
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
 
       - name: Build and test
         run: |
