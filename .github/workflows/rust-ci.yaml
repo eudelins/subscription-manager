@@ -20,6 +20,7 @@ jobs:
           toolchain: stable
 
       - name: Build and test
+        working-directory: ./backend
         run: |
           cargo build --all --verbose
           cargo test --all --verbose
