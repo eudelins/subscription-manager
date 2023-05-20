@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# If any of the checks fail, exit with a non-zero status code to prevent the commit
+set -e
+
+# Go in the backend folder to start tests
+cd backend
+
+# Run code formatting check with `cargo fmt`
+cargo fmt --check
+
+# Run code linting check with `cargo clippy`
+cargo clippy
+
+# Run unit tests with `cargo test`
+cargo test
