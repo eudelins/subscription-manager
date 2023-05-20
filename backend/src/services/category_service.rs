@@ -4,23 +4,30 @@ use crate::repositories::category_repository;
 use crate::SubscriptionsDb;
 
 use rocket_db_pools::Connection;
-use sqlx::{Transaction, Postgres};
-
+use sqlx::{Postgres, Transaction};
 
 pub async fn find_category_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Option<CategoryDTO> {
-    category_repository::find_category_by_id(db, id).await.map(CategoryDTO::from)
+    category_repository::find_category_by_id(db, id)
+        .await
+        .map(CategoryDTO::from)
 }
 
 pub async fn find_all_categories(db: Connection<SubscriptionsDb>) -> Vec<CategoryDTO> {
-    category_repository::find_all_categories(db).await
+    category_repository::find_all_categories(db)
+        .await
         .into_iter()
         .map(CategoryDTO::from)
         .collect()
 }
 
-pub async fn create_category(db: Connection<SubscriptionsDb>, new_cat_dto: CategoryDTO) -> Option<CategoryDTO> {
+pub async fn create_category(
+    db: Connection<SubscriptionsDb>,
+    new_cat_dto: CategoryDTO,
+) -> Option<CategoryDTO> {
     let new_cat = CategoryDAO::from(new_cat_dto);
-    category_repository::create_category(db, new_cat).await.map(CategoryDTO::from)
+    category_repository::create_category(db, new_cat)
+        .await
+        .map(CategoryDTO::from)
 }
 
 pub async fn delete_category_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
@@ -30,17 +37,10 @@ pub async fn delete_category_by_id(db: Connection<SubscriptionsDb>, id: i32) -> 
 pub async fn add_subscription_to_categories(
     db_conn: &mut Transaction<'_, Postgres>,
     sub_id: i32,
-    categories_id: Vec<i32>
+    categories_id: Vec<i32>,
 ) -> Option<()> {
     for cat_id in categories_id.iter() {
-        let result = category_repository::add_subscription_to_category(
-            &mut *db_conn,
-            sub_id,
-            *cat_id
-        ).await;
-        if result.is_none() {
-            return Option::None;
-        }
+        category_repository::add_subscription_to_category(&mut *db_conn, sub_id, *cat_id).await?;
     }
     Some(())
 }

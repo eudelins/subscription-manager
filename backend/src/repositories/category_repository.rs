@@ -1,13 +1,13 @@
 use crate::dao_entities::category_dao::CategoryDAO;
 use crate::SubscriptionsDb;
 
-use sqlx::PgExecutor;
 use rocket_db_pools::{sqlx, Connection};
 use sqlx::FromRow;
+use sqlx::PgExecutor;
 
 pub async fn find_all_categories(mut db: Connection<SubscriptionsDb>) -> Vec<CategoryDAO> {
     sqlx::query("SELECT * FROM Categories;")
-    .fetch_all(&mut *db)
+        .fetch_all(&mut *db)
         .await
         .unwrap_or_else(|_| vec![])
         .iter()

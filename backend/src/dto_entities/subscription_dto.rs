@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::dao_entities::subscription_dao::SubscriptionDAO;
 
@@ -39,7 +39,7 @@ impl From<SubscriptionDAO> for EntireSubscriptionDTO {
             name: sub_dao.name,
             price: sub_dao.price,
             status: sub_dao.status,
-            categories_id: vec![]
+            categories_id: vec![],
         }
     }
 }

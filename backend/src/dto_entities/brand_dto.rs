@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use crate::dao_entities::brand_dao::BrandDAO;
 
@@ -14,7 +14,7 @@ impl From<BrandDAO> for BrandDTO {
         BrandDTO {
             id: brand_dao.id,
             name: brand_dao.name,
-            logo: brand_dao.logo
+            logo: brand_dao.logo,
         }
     }
 }

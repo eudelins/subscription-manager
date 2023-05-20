@@ -1,16 +1,71 @@
 #!/bin/sh
 
 # If any of the checks fail, exit with a non-zero status code to prevent the commit
-set -e
 
 # Go in the backend folder to start tests
 cd backend
 
+# Allows to read user input
+exec < /dev/tty
+
 # Run code formatting check with `cargo fmt`
+printf "Checking format with 'cargo fmt'...\n\n"
 cargo fmt --check
+if [ $? -ne 0 ]; then
+    printf "\nError: Incorrect formatting. Please run 'cargo fmt' in the backend folder before committing.\n"
+    echo "Do you want to execute 'cargo fmt' automatically right now ?"
+
+    while true; do
+        read -p "Do you wish to install this program? (y/n) " yn
+        case $yn in
+            [Yy]* )
+                echo "Executing 'cargo fmt'..."
+                cargo fmt
+                if [ $? -ne 0 ]; then
+                    echo "'cargo fmt' execution failed. Aborting commit"
+                    exit 1
+                fi
+                echo "Done !"
+                break;;
+            [Nn]* ) 
+                echo "Aborting commit. Correct the formatting first."
+                exit 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+else
+    echo "Correct formatting !"
+fi
 
 # Run code linting check with `cargo clippy`
+printf "Checking format with 'cargo clippy'...\n\n"
 cargo clippy
+if [ $? -ne 0 ]; then
+    printf "\nWarning: Clippy detected an incorrect formatting. Please try to correct the issue before your pushing your code.\n"
+    while true; do
+        read -p "Do you still want to commit your changes? (y/n) " yn
+        case $yn in
+            [Yy]* )
+                echo "Pursuing the commit..."
+                break;;
+            [Nn]* ) 
+                echo "Aborting commit."
+                exit 1;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+else
+    echo "Correct formatting !"
+fi
 
 # Run unit tests with `cargo test`
+printf "Running unit tests with 'cargo test'...\n\n"
 cargo test
+if [ $? -ne 0 ]; then
+    printf "\nError: Unit tests failed. Aborting commit.\n"
+    exit 1
+else
+    printf "\nAll tests passed !\n"
+fi
+
+printf "\nAll pre-commit tests passed ! Committing your change \n"
