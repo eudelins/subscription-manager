@@ -31,7 +31,7 @@ pub async fn create_category (
 pub async fn delete_category_by_id(
     db: Connection<SubscriptionsDb>,
     id: i32
-) {
+) -> Option<()> {
     category_service::delete_category_by_id(db, id).await
 }
 
@@ -51,7 +51,7 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         
         let categories = response.into_json::<Vec<CategoryDTO>>().unwrap();
-        assert_eq!(categories.len(), 1);
+        assert_eq!(categories.len(), 2);
 
         let test_category = categories.first().unwrap();
         assert_eq!(test_category.id, 1);

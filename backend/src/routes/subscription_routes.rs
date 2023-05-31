@@ -1,5 +1,5 @@
 use crate::services::subscription_service;
-use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateSubscriptionDTO};
+use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateSubscriptionDTO, EntireSubscriptionDTO};
 use crate::SubscriptionsDb;
 
 use rocket_db_pools::Connection;
@@ -10,7 +10,7 @@ use rocket::serde::json::Json;
 pub async fn find_subscription_by_id(
     db: Connection<SubscriptionsDb>,
     id: i32
-) -> Option<Json<SubscriptionDTO>> {
+) -> Option<Json<EntireSubscriptionDTO>> {
     subscription_service::find_subscription_by_id(db, id).await.map(Json)
 }
 
@@ -33,7 +33,7 @@ pub async fn create_subscription(
 pub async fn delete_subscription_by_id(
     db: Connection<SubscriptionsDb>,
     id: i32
-) {
+) -> Option<()> {
     subscription_service::delete_subscription_by_id(db, id).await
 }
 
@@ -61,20 +61,21 @@ mod test {
         assert_eq!(test_subscription.price, 10.1);
         assert_eq!(test_subscription.status, false);
     }
-
+    
     #[test]
     fn find_subscription_by_id_test() {
         let client = get_test_client().lock().unwrap();
         let response = client.get(format!("/subscriptions/{}", 1)).dispatch();
         assert_eq!(response.status(), Status::Ok);
 
-        let subscription = response.into_json::<SubscriptionDTO>().unwrap();
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
         assert_eq!(subscription.id, 1);
         assert_eq!(subscription.name, "Prime Video");
         assert_eq!(subscription.price, 10.1);
         assert_eq!(subscription.status, false);
+        assert_eq!(subscription.categories_id, vec![1, 2]);
     }
-
+    
     #[test]
     fn create_subscription_find_by_id_and_delete_by_id_test() {
         let client = get_test_client().lock().unwrap();

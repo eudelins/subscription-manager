@@ -33,7 +33,7 @@ pub async fn create_brand (
 pub async fn delete_brand_by_id(
     db: Connection<SubscriptionsDb>,
     id: i32
-) {
+) -> Option<()> {
     brand_service::delete_brand_by_id(db, id).await
 }
 

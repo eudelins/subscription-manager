@@ -1,8 +1,8 @@
 use crate::SubscriptionsDb;
 use crate::dao_entities::category_dao::CategoryDAO;
 
-use rocket_db_pools::{Connection};
-use rocket_db_pools::sqlx::{self};
+use rocket_db_pools::Connection;
+use rocket_db_pools::sqlx;
 use sqlx::FromRow;
 
 
@@ -35,14 +35,31 @@ pub async fn create_category(mut db: Connection<SubscriptionsDb>, new_catgeory: 
     .ok()
 }
 
-pub async fn delete_category_by_id(mut db: Connection<SubscriptionsDb>, id: i32) {
+pub async fn delete_category_by_id(mut db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
     sqlx::query(
         "DELETE FROM Categories WHERE id = $1;"
     )
     .bind(id)
-    .execute(&mut *db).await.map(|res| {
-        println!("Successful delete: {} row affected", res.rows_affected())
-    })
-    .map_err(|e| println!("Error: {:?}", e))
-    .ok();
+    .execute(&mut *db).await
+    .map_err(|e| println!("Error while deleting category: {:?}", e))
+    .ok()
+    .filter(|res| res.rows_affected() == 1)
+    .map(|_| ())
+}
+
+pub async fn add_subscription_to_category(
+    db: &mut Connection<SubscriptionsDb>,
+    sub_id: i32,
+    category_id: i32
+) -> Option<()> {
+    sqlx::query(
+        "INSERT INTO Belongs_To_Categories (subscription_id, category_id) VALUES ($1, $2);"
+    )
+    .bind(sub_id)
+    .bind(category_id)
+    .execute(&mut **db).await
+    .map_err(|e| println!("Error while adding sub to category: {:?}", e))
+    .ok()
+    .filter(|res| res.rows_affected() == 1)
+    .map(|_| ())
 }
