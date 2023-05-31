@@ -1,13 +1,13 @@
-use crate::SubscriptionsDb;
 use crate::dao_entities::brand_dao::BrandDAO;
+use crate::SubscriptionsDb;
 
-use rocket_db_pools::{Connection};
-use rocket_db_pools::sqlx::{self};
+use rocket_db_pools::{sqlx, Connection};
 use sqlx::FromRow;
 
 pub async fn find_all_brands(mut db: Connection<SubscriptionsDb>) -> Vec<BrandDAO> {
     sqlx::query("SELECT * FROM Brands;")
-        .fetch_all(&mut *db).await
+        .fetch_all(&mut *db)
+        .await
         .unwrap_or_else(|_| vec![])
         .iter()
         .filter_map(|row| BrandDAO::from_row(row).ok())
@@ -15,33 +15,36 @@ pub async fn find_all_brands(mut db: Connection<SubscriptionsDb>) -> Vec<BrandDA
 }
 
 pub async fn find_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) -> Option<BrandDAO> {
-    sqlx::query("SELECT * FROM Brands WHERE id = $1;").bind(id)
-        .fetch_one(&mut *db).await
+    sqlx::query("SELECT * FROM Brands WHERE id = $1;")
+        .bind(id)
+        .fetch_one(&mut *db)
+        .await
         .and_then(|r| BrandDAO::from_row(&r))
         .map_err(|e| println!("Error: {:?}", e))
         .ok()
 }
 
-pub async fn create_brand(mut db: Connection<SubscriptionsDb>, new_brand: BrandDAO) -> Option<BrandDAO> {
-    sqlx::query(
-        "INSERT INTO Brands (name, logo) VALUES ($1, $2) RETURNING *;"
-    )
-    .bind(new_brand.name)
-    .bind(new_brand.logo)
-    .fetch_one(&mut *db).await
-    .and_then(|res| BrandDAO::from_row(&res))
-    .map_err(|e| println!("Error: {:?}", e))
-    .ok()
+pub async fn create_brand(
+    mut db: Connection<SubscriptionsDb>,
+    new_brand: BrandDAO,
+) -> Option<BrandDAO> {
+    sqlx::query("INSERT INTO Brands (name, logo) VALUES ($1, $2) RETURNING *;")
+        .bind(new_brand.name)
+        .bind(new_brand.logo)
+        .fetch_one(&mut *db)
+        .await
+        .and_then(|res| BrandDAO::from_row(&res))
+        .map_err(|e| println!("Error: {:?}", e))
+        .ok()
 }
 
 pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
-    sqlx::query(
-        "DELETE FROM Brands WHERE id = $1;"
-    )
-    .bind(id)
-    .execute(&mut *db).await
-    .map_err(|e| println!("Error while deleting brand: {:?}", e))
-    .ok()
-    .filter(|res| res.rows_affected() == 1)
-    .map(|_| ())
+    sqlx::query("DELETE FROM Brands WHERE id = $1;")
+        .bind(id)
+        .execute(&mut *db)
+        .await
+        .map_err(|e| println!("Error while deleting brand: {:?}", e))
+        .ok()
+        .filter(|res| res.rows_affected() == 1)
+        .map(|_| ())
 }

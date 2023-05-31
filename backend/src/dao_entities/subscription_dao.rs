@@ -1,6 +1,6 @@
 use sqlx;
 
-use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateOrUpdateSubscriptionDTO};
+use crate::dto_entities::subscription_dto::{CreateOrUpdateSubscriptionDTO, SubscriptionDTO};
 
 #[derive(sqlx::FromRow)]
 pub struct SubscriptionDAO {
@@ -20,7 +20,7 @@ impl From<SubscriptionDTO> for SubscriptionDAO {
     fn from(sub_dto: SubscriptionDTO) -> Self {
         SubscriptionDAO {
             id: sub_dto.id,
-            brand_id: 1,  // TO DO
+            brand_id: 1, // TO DO
             name: sub_dto.name,
             price: sub_dto.price,
             status: sub_dto.status,
@@ -28,7 +28,7 @@ impl From<SubscriptionDTO> for SubscriptionDAO {
             subscribe_link: Option::None,
             unsubscribe_link: Option::None,
             start_date: Option::None,
-            end_date: Option::None
+            end_date: Option::None,
         }
     }
 }
@@ -45,7 +45,7 @@ impl From<CreateOrUpdateSubscriptionDTO> for SubscriptionDAO {
             subscribe_link: Option::None,
             unsubscribe_link: Option::None,
             start_date: Option::None,
-            end_date: Option::None
+            end_date: Option::None,
         }
     }
 }

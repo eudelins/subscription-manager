@@ -3,12 +3,11 @@ pub fn healthcheck() -> &'static str {
     "Health is OK !"
 }
 
-
 #[cfg(test)]
 mod test {
     use crate::rocket;
-    use rocket::local::blocking::Client;
     use rocket::http::Status;
+    use rocket::local::blocking::Client;
 
     #[test]
     fn healthcheck_test() {
