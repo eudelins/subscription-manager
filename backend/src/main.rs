@@ -9,6 +9,7 @@ use services::{
 };
 use routes::{subscription_routes::*, brand_routes::*, healthcheck::healthcheck};
 use fairings::cors::CORS;
+use utils::get_config;
 
 pub mod routes;
 pub mod repositories;
@@ -24,7 +25,8 @@ pub struct SubscriptionsDb(sqlx::PgPool);
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().attach(SubscriptionsDb::init())
+    rocket::custom(get_config())
+        .attach(SubscriptionsDb::init())
         .attach(CORS)
         .manage(SubscriptionService::build_subscription_service())
         .manage(BrandService::build_brand_service())

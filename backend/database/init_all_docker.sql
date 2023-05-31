@@ -1,4 +1,5 @@
-CREATE USER subscriptions_db_user WITH ENCRYPTED PASSWORD 'admin';
+\set db_user_password `echo "$DB_USER_PASSWORD"`
+CREATE USER subscriptions_db_user WITH ENCRYPTED PASSWORD :'db_user_password';
 CREATE DATABASE subscriptions_db WITH OWNER subscriptions_db_user;
 GRANT ALL PRIVILEGES ON DATABASE subscriptions_db TO subscriptions_db_user;
 \c subscriptions_db;
