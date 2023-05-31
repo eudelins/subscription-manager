@@ -1,45 +1,40 @@
-use crate::services::subscription_service::{SubscriptionService};
+use crate::services::subscription_service;
 use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateSubscriptionDTO};
 use crate::SubscriptionsDb;
 
-use rocket::State;
-use rocket_db_pools::{Connection};
+use rocket_db_pools::Connection;
 use rocket::serde::json::Json;
 
 
 #[get("/<id>")]
 pub async fn find_subscription_by_id(
-    subscription_service: &State<SubscriptionService>,
     db: Connection<SubscriptionsDb>,
     id: i32
 ) -> Option<Json<SubscriptionDTO>> {
-    subscription_service.find_subscription_by_id(db, id).await.map(Json)
+    subscription_service::find_subscription_by_id(db, id).await.map(Json)
 }
 
 #[get("/")]
 pub async fn find_all_subscriptions(
-    subscription_service: &State<SubscriptionService>,
     db: Connection<SubscriptionsDb>
 ) -> Json<Vec<SubscriptionDTO>> {
-    Json(subscription_service.find_all_subscriptions(db).await)
+    Json(subscription_service::find_all_subscriptions(db).await)
 }
 
 #[post("/", format = "application/json", data = "<new_sub>")]
 pub async fn create_subscription(
-    subscription_service: &State<SubscriptionService>,
     db: Connection<SubscriptionsDb>,
     new_sub: Json<CreateSubscriptionDTO>
 ) -> Option<Json<SubscriptionDTO>> {
-    subscription_service.create_subscription(db, new_sub.into_inner()).await.map(Json)
+    subscription_service::create_subscription(db, new_sub.into_inner()).await.map(Json)
 }
 
 #[delete("/<id>")]
 pub async fn delete_subscription_by_id(
-    subscription_service: &State<SubscriptionService>,
     db: Connection<SubscriptionsDb>,
     id: i32
 ) {
-    subscription_service.delete_subscription_by_id(db, id).await
+    subscription_service::delete_subscription_by_id(db, id).await
 }
 
 

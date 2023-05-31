@@ -1,45 +1,40 @@
-use crate::services::brand_service::{BrandService};
+use crate::services::brand_service;
 use crate::dto_entities::brand_dto::BrandDTO;
 use crate::SubscriptionsDb;
 
-use rocket::State;
-use rocket_db_pools::{Connection};
+use rocket_db_pools::Connection;
 use rocket::serde::json::Json;
 
 
 #[get("/<id>")]
 pub async fn find_brand_by_id(
-    brand_service: &State<BrandService>,
     db: Connection<SubscriptionsDb>,
     id: i32
 ) -> Option<Json<BrandDTO>> {
-    brand_service.find_brand_by_id(db, id).await.map(Json)
+    brand_service::find_brand_by_id(db, id).await.map(Json)
 }
 
 #[get("/")]
 pub async fn find_all_brands(
-    brand_service: &State<BrandService>,
     db: Connection<SubscriptionsDb>
 ) -> Json<Vec<BrandDTO>> {
-    Json(brand_service.find_all_brands(db).await)
+    Json(brand_service::find_all_brands(db).await)
 }
 
 #[post("/", format = "application/json", data = "<new_brand>")]
 pub async fn create_brand (
-    brand_service: &State<BrandService>,
     db: Connection<SubscriptionsDb>,
     new_brand: Json<BrandDTO>
 ) -> Option<Json<BrandDTO>> {
-    brand_service.create_brand(db, new_brand.into_inner()).await.map(Json)
+    brand_service::create_brand(db, new_brand.into_inner()).await.map(Json)
 }
 
 #[delete("/<id>")]
 pub async fn delete_brand_by_id(
-    brand_service: &State<BrandService>,
     db: Connection<SubscriptionsDb>,
     id: i32
 ) {
-    brand_service.delete_brand_by_id(db, id).await
+    brand_service::delete_brand_by_id(db, id).await
 }
 
 
