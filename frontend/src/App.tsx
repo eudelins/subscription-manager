@@ -1,24 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { Layout, theme } from 'antd';
-
-import { getAllSubscriptions } from './services/subscriptions';
-import Subscriptions from './interfaces/subscriptions/subscription.interface';
 import Sidebar from './components/Sidebar';
+
+import { Outlet } from 'react-router-dom';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 function App() {
-  const [subscriptions, setSubscriptions] = useState<Subscriptions[]>([]);
   const [isMenuCollapsed, setMenuCollapsed] = useState(false);
 
   const {
     token: { colorBgContainer }
   } = theme.useToken();
-
-  useEffect(() => {
-    getAllSubscriptions().then((res) => setSubscriptions(res));
-  }, []);
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -36,9 +30,7 @@ function App() {
         </Header>
         <Content style={{ margin: '24px 16px' }}>
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
-            {subscriptions.map((s) => {
-              return <p key={s.name}>{s.name}</p>;
-            })}
+            <Outlet />
           </div>
         </Content>
         <Footer />
