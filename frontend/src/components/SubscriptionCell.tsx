@@ -7,14 +7,14 @@ const LOGO_SIZE = 80;
 interface Props {
   subscription: Subscription;
   archiveMode: boolean;
-  onStatusUpdate: (_: boolean) => void;
+  onStatusUpdate: () => void;
 }
 
 function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) {
   const url = '../../src-tauri/icons/icon.png'; // TO CHANGE
 
   const handleStatusChange = () => {
-    onStatusUpdate(!subscription.status);
+    onStatusUpdate();
   };
 
   return (

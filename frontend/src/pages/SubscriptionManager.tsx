@@ -1,36 +1,42 @@
 import { useState, useEffect } from 'react';
 
-import { Col, Row, Space } from 'antd';
-import SubscriptionCell from '../components/SubscriptionCell';
+import { Row, Space } from 'antd';
 import AddSubscriptionButton from '../components/AddSubcriptionButton';
+import ArchiveSubscriptionsButton from '../components/ArchiveSubscriptionsButton';
+import DividerWithTitle from '../components/DividerWithTitle';
+import SubscriptionsGrid from '../components/SubscriptionsGrid';
 
 import { getAllSubscriptions } from '../services/subscriptions';
 import Subscription from '../interfaces/subscriptions/subscription.interface';
 
-import ArchiveSubscriptionsButton from '../components/ArchiveSubscriptionsButton';
-
-const NUMBER_OF_CELLS_IN_GRID = 24;
-const NUMBER_OF_SUBS_IN_ROW = 4;
 const SPACE_BETWEEN_CELLS = 16;
 
 function SubscriptionManager() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [subscriptionsToArchive, setSubscriptionsToArchive] = useState<Subscription[]>([]);
   const [archiveMode, setArchiveMode] = useState(false);
 
   useEffect(() => {
     getAllSubscriptions().then((res) => setSubscriptions(res));
   }, []);
 
-  const changeSubscriptionStatus = (index: number, newStatus: boolean) => {
-    setSubscriptions((prevSubscriptions: Subscription[]) => {
-      const updatedSubscriptions = [...prevSubscriptions];
-      updatedSubscriptions[index] = {
-        ...updatedSubscriptions[index],
-        status: newStatus
-      };
-      return updatedSubscriptions;
+  const changeSubscriptionStatus = (index: number) => {
+    setSubscriptionsToArchive((prevSubscriptionsToArchive: Subscription[]) => {
+      const updatedSubscriptionsToArchive = [...prevSubscriptionsToArchive];
+      const archivedSubIndex = updatedSubscriptionsToArchive.findIndex((sub) => {
+        return sub.id === subscriptions[index].id;
+      });
+      if (archivedSubIndex === -1) {
+        updatedSubscriptionsToArchive.push(subscriptions[index]);
+      } else {
+        updatedSubscriptionsToArchive.splice(archivedSubIndex, 1);
+      }
+      return updatedSubscriptionsToArchive;
     });
   };
+
+  const activeSubscriptions = subscriptions.filter((s) => s.status);
+  const archivedSubscriptions = subscriptions.filter((s) => !s.status);
 
   return (
     <>
@@ -39,51 +45,32 @@ function SubscriptionManager() {
           <ArchiveSubscriptionsButton
             archiveMode={archiveMode}
             setArchiveMode={setArchiveMode}
-            subsToArchive={subscriptions.filter((s) => !s.status)}
+            subsToArchive={subscriptionsToArchive}
           />
           <AddSubscriptionButton />
         </Space>
       </Row>
-      {createRange(getNumberOfRows(subscriptions)).map((rowIndex) => {
-        return (
-          <Row
-            gutter={SPACE_BETWEEN_CELLS}
-            key={rowIndex}
-            style={{ marginBottom: SPACE_BETWEEN_CELLS }}>
-            {getOneRow(subscriptions, rowIndex).map((sub, index) => {
-              return (
-                <Col span={NUMBER_OF_CELLS_IN_GRID / NUMBER_OF_SUBS_IN_ROW} key={sub.id}>
-                  <SubscriptionCell
-                    subscription={sub}
-                    archiveMode={archiveMode}
-                    onStatusUpdate={(newStatus: boolean) =>
-                      changeSubscriptionStatus(index, newStatus)
-                    }
-                  />
-                </Col>
-              );
-            })}
-          </Row>
-        );
-      })}
+      {activeSubscriptions.length > 0 && <DividerWithTitle title="Vos abonnements en cours" />}
+      <SubscriptionsGrid
+        subs={activeSubscriptions}
+        archiveMode={archiveMode}
+        cellsSpacing={SPACE_BETWEEN_CELLS}
+        changeSubscriptionStatus={changeSubscriptionStatus}
+      />
+      {archivedSubscriptions.length > 0 && (
+        <DividerWithTitle
+          title="Vos abonnements archivés"
+          style={{ marginTop: SPACE_BETWEEN_CELLS * 4 }}
+        />
+      )}
+      <SubscriptionsGrid
+        subs={archivedSubscriptions}
+        archiveMode={false}
+        cellsSpacing={SPACE_BETWEEN_CELLS}
+        changeSubscriptionStatus={(_) => {}}
+      />
     </>
   );
-}
-
-function getNumberOfRows(subscriptions: Subscription[]): number {
-  return ((subscriptions.length / NUMBER_OF_SUBS_IN_ROW) | 0) + 1;
-}
-
-function createRange(length: number): number[] {
-  return [...Array(length).keys()];
-}
-
-function getOneRow(subscriptions: Subscription[], rowIndex: number): Subscription[] {
-  return subscriptions.filter((_, index) => {
-    return (
-      index >= rowIndex * NUMBER_OF_SUBS_IN_ROW && index < (rowIndex + 1) * NUMBER_OF_SUBS_IN_ROW
-    );
-  });
 }
 
 export default SubscriptionManager;
