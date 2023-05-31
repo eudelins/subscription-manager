@@ -1,29 +1,41 @@
 import App from '../App';
-
-import { createBrowserRouter } from 'react-router-dom';
 import SubscriptionManager from '../pages/SubscriptionManager';
 import DataVisualization from '../pages/DataVisualization';
 import Customization from '../pages/Customization';
+import SubscriptionCreator from '../pages/SubscriptionCreator';
+
+import { createBrowserRouter } from 'react-router-dom';
+import {
+  CUSTOMIZATION_ROUTE,
+  DATA_VISUALIZATION_ROUTE,
+  ROOT_ROUTE,
+  SUBSCRIPTION_CREATOR_ROUTE,
+  SUBSCRIPTION_MANAGER_ROUTE
+} from './routes';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: ROOT_ROUTE,
     element: <App />,
     children: [
       {
-        path: '/',
+        path: ROOT_ROUTE,
         element: <SubscriptionManager />
       },
       {
-        path: 'subscriptions/',
+        path: SUBSCRIPTION_MANAGER_ROUTE,
         element: <SubscriptionManager />
       },
       {
-        path: 'data/',
+        path: SUBSCRIPTION_CREATOR_ROUTE,
+        element: <SubscriptionCreator />
+      },
+      {
+        path: DATA_VISUALIZATION_ROUTE,
         element: <DataVisualization />
       },
       {
-        path: 'customization/',
+        path: CUSTOMIZATION_ROUTE,
         element: <Customization />
       }
     ]

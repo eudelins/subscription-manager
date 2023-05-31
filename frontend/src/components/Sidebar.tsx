@@ -1,7 +1,13 @@
+import { Link } from 'react-router-dom';
+import {
+  CUSTOMIZATION_ROUTE,
+  DATA_VISUALIZATION_ROUTE,
+  SUBSCRIPTION_MANAGER_ROUTE
+} from '../routes/routes';
+
 import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import type { MenuProps } from 'antd';
-import { Link } from 'react-router-dom';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -22,9 +28,13 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to={`subscriptions/`}>Gestion des abonnements</Link>, '1', <PieChartOutlined />),
-  getItem(<Link to={`data/`}>Visualisation</Link>, '2', <DesktopOutlined />),
-  getItem(<Link to={`customization/`}>Personnalisation</Link>, '3', <ContainerOutlined />)
+  getItem(
+    <Link to={SUBSCRIPTION_MANAGER_ROUTE}>Gestion des abonnements</Link>,
+    '1',
+    <PieChartOutlined />
+  ),
+  getItem(<Link to={DATA_VISUALIZATION_ROUTE}>Visualisation</Link>, '2', <DesktopOutlined />),
+  getItem(<Link to={CUSTOMIZATION_ROUTE}>Personnalisation</Link>, '3', <ContainerOutlined />)
 ];
 
 function Sidebar() {

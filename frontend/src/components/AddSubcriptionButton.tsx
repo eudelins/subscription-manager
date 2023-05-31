@@ -1,8 +1,14 @@
+import { useNavigate } from 'react-router-dom';
+import { SUBSCRIPTION_CREATOR_ROUTE } from '../routes/routes';
+
 import { Button } from 'antd';
 
 function AddSubscriptionButton() {
+  const navigate = useNavigate();
+  const handleClick = () => navigate(SUBSCRIPTION_CREATOR_ROUTE);
+
   return (
-    <Button shape="round" size="large" style={buttonStyle}>
+    <Button shape="round" size="large" style={buttonStyle} onClick={handleClick}>
       Ajouter un nouvel abonnement
     </Button>
   );

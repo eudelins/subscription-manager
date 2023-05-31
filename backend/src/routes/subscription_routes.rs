@@ -1,5 +1,5 @@
 use crate::services::subscription_service::{SubscriptionService};
-use crate::dto_entities::subscription_dto::SubscriptionDTO;
+use crate::dto_entities::subscription_dto::{SubscriptionDTO, CreateSubscriptionDTO};
 use crate::SubscriptionsDb;
 
 use rocket::State;
@@ -28,7 +28,7 @@ pub async fn find_all_subscriptions(
 pub async fn create_subscription(
     subscription_service: &State<SubscriptionService>,
     db: Connection<SubscriptionsDb>,
-    new_sub: Json<SubscriptionDTO>
+    new_sub: Json<CreateSubscriptionDTO>
 ) -> Option<Json<SubscriptionDTO>> {
     subscription_service.create_subscription(db, new_sub.into_inner()).await.map(Json)
 }
@@ -83,11 +83,12 @@ mod test {
     #[test]
     fn create_subscription_find_by_id_and_delete_by_id_test() {
         let client = get_test_client().lock().unwrap();
-        let new_subscription = SubscriptionDTO {
-            id: -1,
+        let new_subscription = CreateSubscriptionDTO {
             name: String::from("test_new_subscription"),
+            brand_id: 1,
             price: 7.99,
             status: true,
+            categories_id: Vec::new()
         };
         let response = client.post(uri!("/subscriptions", super::create_subscription))
             .header(Header::new("Content-type", "application/json"))

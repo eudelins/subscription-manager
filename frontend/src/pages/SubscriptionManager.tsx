@@ -50,8 +50,6 @@ function getNumberOfRows(subscriptions: Subscription[]): number {
 }
 
 function createRange(length: number): number[] {
-  console.log(length);
-  console.log([...Array(length).keys()]);
   return [...Array(length).keys()];
 }
 
