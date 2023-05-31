@@ -29,7 +29,8 @@ fn rocket() -> _ {
             find_subscription_by_id,
             find_all_subscriptions,
             create_subscription,
-            delete_subscription_by_id
+            delete_subscription_by_id,
+            update_subscription
         ])
         .mount("/brands/", routes![
             find_brand_by_id,

@@ -4,6 +4,7 @@ use crate::dao_entities::subscription_dao::SubscriptionDAO;
 use rocket_db_pools::Connection;
 use rocket_db_pools::sqlx;
 use sqlx::FromRow;
+use sqlx::PgExecutor;
 use sqlx::Row;
 
 
@@ -24,18 +25,30 @@ pub async fn find_subscription_by_id(db: &mut Connection<SubscriptionsDb>, id: i
         .ok()
 }
 
-pub async fn create_subscription(db: &mut Connection<SubscriptionsDb>, new_sub: SubscriptionDAO) -> Option<SubscriptionDAO> {
-    sqlx::query(
-        "INSERT INTO Subscriptions (brand_id, name, price, status) VALUES ($1, $2, $3, $4) RETURNING *;"
-    )
-    .bind(new_sub.brand_id)
-    .bind(new_sub.name)
-    .bind(new_sub.price)
-    .bind(new_sub.status)
-    .fetch_one(&mut **db).await
-    .and_then(|res| SubscriptionDAO::from_row(&res))
-    .map_err(|e| println!("Error: {:?}", e))
-    .ok()
+pub async fn create_or_update_subscription<'a>(
+    db: impl PgExecutor<'a>,
+    new_sub: SubscriptionDAO,
+    is_update: bool
+) -> Option<SubscriptionDAO> {
+
+    let query = if is_update {
+        sqlx::query(
+            "UPDATE Subscriptions SET brand_id=$2, name=$3, price=$4, status=$5 WHERE id=$1 RETURNING *;"
+        ).bind(new_sub.id)
+    } else {
+        sqlx::query(
+            "INSERT INTO Subscriptions (brand_id, name, price, status) VALUES ($1, $2, $3, $4) RETURNING *;"
+        )
+    };
+
+    query.bind(new_sub.brand_id)
+        .bind(new_sub.name)
+        .bind(new_sub.price)
+        .bind(new_sub.status)
+        .fetch_one(db).await
+        .and_then(|res| SubscriptionDAO::from_row(&res))
+        .map_err(|e| println!("Error: {:?}", e))
+        .ok()
 }
 
 pub async fn delete_subscription_by_id(db: &mut Connection<SubscriptionsDb>, id: i32) -> Option<()> {
@@ -60,4 +73,18 @@ pub async fn fetch_subscription_categories_id(db: &mut Connection<SubscriptionsD
     .iter()
     .filter_map(|row| row.try_get(0).ok())
     .collect()
+}
+
+pub async fn remove_subscription_from_all_categories(
+    db: impl PgExecutor<'_>,
+    id: i32
+) -> Option<()> {
+    sqlx::query(
+        "DELETE FROM Belongs_To_Categories WHERE subscription_id = $1;"
+    )
+    .bind(id)
+    .execute(db).await
+    .map_err(|e| println!("Error while removing sub from categories: {:?}", e))
+    .ok()
+    .map(|_| ())
 }

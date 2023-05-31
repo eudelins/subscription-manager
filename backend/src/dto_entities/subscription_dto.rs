@@ -45,7 +45,8 @@ impl From<SubscriptionDAO> for EntireSubscriptionDTO {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct CreateSubscriptionDTO {
+pub struct CreateOrUpdateSubscriptionDTO {
+    pub id: Option<i32>,
     pub name: String,
     pub brand_id: i32,
     pub price: f32,

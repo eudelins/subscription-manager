@@ -4,6 +4,7 @@ use crate::repositories::category_repository;
 use crate::SubscriptionsDb;
 
 use rocket_db_pools::Connection;
+use sqlx::{Transaction, Postgres};
 
 
 pub async fn find_category_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Option<CategoryDTO> {
@@ -27,20 +28,19 @@ pub async fn delete_category_by_id(db: Connection<SubscriptionsDb>, id: i32) -> 
 }
 
 pub async fn add_subscription_to_categories(
-    mut db: Connection<SubscriptionsDb>,
+    db_conn: &mut Transaction<'_, Postgres>,
     sub_id: i32,
     categories_id: Vec<i32>
 ) -> Option<()> {
-    let mut all_add_success = Option::Some(());
     for cat_id in categories_id.iter() {
         let result = category_repository::add_subscription_to_category(
-            &mut db,
+            &mut *db_conn,
             sub_id,
             *cat_id
         ).await;
-        if all_add_success.is_some() && result.is_none() {
-            all_add_success = Option::None;
+        if result.is_none() {
+            return Option::None;
         }
     }
-    all_add_success
+    Some(())
 }
