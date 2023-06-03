@@ -17,21 +17,19 @@ pub async fn get_statistics(db: Connection<SubscriptionsDb>) -> StatisticsDTO {
     StatisticsDTO::new(
         get_monthly_expense(&active_subs),
         get_monthly_expense_by_category(&active_subs),
-        active_subs.iter().count(),
+        active_subs.len(),
     )
 }
 
-pub fn get_monthly_expense(active_subs: &Vec<EntireSubscriptionDTO>) -> f32 {
+pub fn get_monthly_expense(active_subs: &[EntireSubscriptionDTO]) -> f32 {
     active_subs.iter().map(|s| s.price).sum()
 }
 
-pub fn get_monthly_expense_by_category(
-    active_subs: &Vec<EntireSubscriptionDTO>,
-) -> HashMap<i32, f32> {
+pub fn get_monthly_expense_by_category(active_subs: &[EntireSubscriptionDTO]) -> HashMap<i32, f32> {
     let mut monthly_expenses = HashMap::<i32, f32>::new();
     active_subs.iter().for_each(|s| {
         s.categories_id.iter().for_each(|c_id| {
-            monthly_expenses.insert(*c_id, s.price + monthly_expenses.get(&c_id).unwrap_or(&0.0));
+            monthly_expenses.insert(*c_id, s.price + monthly_expenses.get(c_id).unwrap_or(&0.0));
         });
     });
     monthly_expenses
