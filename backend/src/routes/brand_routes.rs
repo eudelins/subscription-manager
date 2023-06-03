@@ -47,7 +47,7 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
 
         let brands = response.into_json::<Vec<BrandDTO>>().unwrap();
-        assert_eq!(brands.len(), 1);
+        assert_eq!(brands.len(), 3);
 
         let test_brand = brands.first().unwrap();
         assert_eq!(test_brand.id, 1);

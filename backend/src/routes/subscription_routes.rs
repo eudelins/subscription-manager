@@ -22,6 +22,13 @@ pub async fn find_all_subscriptions(db: Connection<SubscriptionsDb>) -> Json<Vec
     Json(subscription_service::find_all_subscriptions(db).await)
 }
 
+#[get("/with-categories")]
+pub async fn find_all_subscriptions_with_categories(
+    db: Connection<SubscriptionsDb>,
+) -> Json<Vec<EntireSubscriptionDTO>> {
+    Json(subscription_service::find_all_subscriptions_with_categories(db).await)
+}
+
 #[post("/", format = "application/json", data = "<new_sub>")]
 pub async fn create_subscription(
     db: Connection<SubscriptionsDb>,
@@ -64,13 +71,13 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
 
         let subscriptions = response.into_json::<Vec<SubscriptionDTO>>().unwrap();
-        assert_eq!(subscriptions.len(), 1);
+        assert_eq!(subscriptions.len(), 3);
 
-        let test_subscription = subscriptions.first().unwrap();
+        let test_subscription = subscriptions.iter().find(|s| s.id == 1).unwrap();
         assert_eq!(test_subscription.id, 1);
         assert_eq!(test_subscription.name, "Prime Video");
         assert_eq!(test_subscription.price, 10.1);
-        assert_eq!(test_subscription.status, false);
+        assert_eq!(test_subscription.status, true);
     }
 
     #[test]
@@ -83,7 +90,7 @@ mod test {
         assert_eq!(subscription.id, 1);
         assert_eq!(subscription.name, "Prime Video");
         assert_eq!(subscription.price, 10.1);
-        assert_eq!(subscription.status, false);
+        assert_eq!(subscription.status, true);
         assert_eq!(subscription.categories_id, vec![1, 2]);
     }
 
@@ -168,7 +175,7 @@ mod test {
             name: String::from("Prime Video"),
             brand_id: 1,
             price: 10.1,
-            status: false,
+            status: true,
             categories_id: vec![1, 2],
         };
         let response = client
@@ -185,7 +192,7 @@ mod test {
         assert_eq!(subscription.id, 1);
         assert_eq!(subscription.name, "Prime Video");
         assert_eq!(subscription.price, 10.1);
-        assert_eq!(subscription.status, false);
+        assert_eq!(subscription.status, true);
         assert_eq!(subscription.categories_id, vec![1, 2]);
     }
 }

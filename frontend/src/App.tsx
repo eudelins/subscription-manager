@@ -26,7 +26,7 @@ function App() {
       </Sider>
       <Layout className="site-layout">
         <Header style={{ fontSize: 24, textAlign: 'center', background: colorBgContainer }}>
-          Welcome to your subscription manager !
+          Bienvenue sur votre gestionnaire d&apos;abonnements !
         </Header>
         <Content style={{ margin: '24px 16px' }}>
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>

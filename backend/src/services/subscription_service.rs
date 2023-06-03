@@ -35,6 +35,21 @@ pub async fn find_all_subscriptions(mut db: Connection<SubscriptionsDb>) -> Vec<
         .collect()
 }
 
+pub async fn find_all_subscriptions_with_categories(
+    mut db: Connection<SubscriptionsDb>,
+) -> Vec<EntireSubscriptionDTO> {
+    let mut subs_dto = subscription_repository::find_all_subscriptions(&mut db)
+        .await
+        .into_iter()
+        .map(EntireSubscriptionDTO::from)
+        .collect::<Vec<EntireSubscriptionDTO>>();
+    for mut sub in subs_dto.iter_mut() {
+        sub.categories_id =
+            subscription_repository::fetch_subscription_categories_id(&mut db, sub.id).await;
+    }
+    subs_dto
+}
+
 pub async fn create_or_update_subscription(
     mut db: Connection<SubscriptionsDb>,
     new_sub_dto: CreateOrUpdateSubscriptionDTO,
