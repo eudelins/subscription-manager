@@ -3,6 +3,7 @@ import SubscriptionManager from '../pages/SubscriptionManager';
 import DataVisualization from '../pages/DataVisualization';
 import Customization from '../pages/Customization';
 import SubscriptionCreator from '../pages/SubscriptionCreator';
+import SubscriptionPage from '../pages/SubscriptionPage';
 
 import { createBrowserRouter } from 'react-router-dom';
 import {
@@ -10,7 +11,8 @@ import {
   DATA_VISUALIZATION_ROUTE,
   ROOT_ROUTE,
   SUBSCRIPTION_CREATOR_ROUTE,
-  SUBSCRIPTION_MANAGER_ROUTE
+  SUBSCRIPTION_MANAGER_ROUTE,
+  SUBSCRIPTION_PAGE_ROUTE
 } from './routes';
 
 const router = createBrowserRouter([
@@ -29,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: SUBSCRIPTION_CREATOR_ROUTE,
         element: <SubscriptionCreator />
+      },
+      {
+        path: SUBSCRIPTION_PAGE_ROUTE,
+        element: <SubscriptionPage />
       },
       {
         path: DATA_VISUALIZATION_ROUTE,

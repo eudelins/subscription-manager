@@ -8,6 +8,18 @@ export async function getAllSubscriptions(): Promise<Subscription[]> {
   return subscriptions.data;
 }
 
+export async function getSubscriptionById(id: string): Promise<Subscription> {
+  const subscription = await axios.get(SUBSCRIPTIONS_API_PATH + id);
+  return {
+    id: subscription.data.id,
+    brandId: subscription.data.brand_id,
+    name: subscription.data.name,
+    price: subscription.data.price,
+    status: subscription.data.status,
+    categoriesId: subscription.data.categories_id
+  };
+}
+
 export async function createSubscription(
   name: string,
   price: number,
