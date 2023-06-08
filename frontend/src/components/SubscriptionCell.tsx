@@ -1,6 +1,8 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useState } from 'react';
 import { Card, Avatar, Checkbox } from 'antd';
 import Subscription from '../interfaces/subscriptions/subscription.interface';
+import { useNavigate } from 'react-router-dom';
+import { SUBSCRIPTION_PAGE_ROUTE } from '../routes/routes';
 
 const LOGO_SIZE = 80;
 
@@ -13,16 +15,31 @@ interface Props {
 function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) {
   const url = '../../src-tauri/icons/icon.png'; // TO CHANGE
 
+  const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (archiveMode) {
+      setIsChecked(!isChecked);
+    } else {
+      navigate(SUBSCRIPTION_PAGE_ROUTE.replace(':id', subscription.id.toString()));
+    }
+  };
+
   const handleStatusChange = () => {
     onStatusUpdate();
   };
 
   return (
     <div style={{ display: 'grid', gridTemplateRows: 'auto 1fr' }}>
-      <Card style={{ textAlign: 'center', border: '2px solid #f0f0f0' }} hoverable>
+      <Card
+        style={{ textAlign: 'center', border: '2px solid #f0f0f0' }}
+        hoverable
+        onClick={handleClick}>
         <Avatar size={LOGO_SIZE} src={url} alt="logo" />
         <div style={cardTitleStyle}>{subscription.name.toUpperCase()}</div>
         <Checkbox
+          checked={isChecked}
           onChange={handleStatusChange}
           style={{ visibility: archiveMode ? 'visible' : 'hidden' }}
         />
