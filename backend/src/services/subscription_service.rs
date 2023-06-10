@@ -114,13 +114,10 @@ pub async fn update_subscriptions_status(
         Err(_) => return Option::None,
     };
     for id in sub_ids {
-        let result_dto = subscription_repository::update_subscription_status(
-            &mut transaction,
-            *id,
-            new_status,
-        )
-        .await
-        .map(SubscriptionDTO::from);
+        let result_dto =
+            subscription_repository::update_subscription_status(&mut transaction, *id, new_status)
+                .await
+                .map(SubscriptionDTO::from);
         if result_dto.is_none() {
             return rollback_and_return_none(transaction).await;
         }

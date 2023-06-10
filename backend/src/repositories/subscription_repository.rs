@@ -60,7 +60,7 @@ pub async fn create_or_update_subscription<'a>(
 pub async fn update_subscription_status<'a>(
     db: impl PgExecutor<'a>,
     sub_id: i32,
-    new_status: bool
+    new_status: bool,
 ) -> Option<SubscriptionDAO> {
     sqlx::query("UPDATE Subscriptions SET status=$2 WHERE id=$1 RETURNING *;")
         .bind(sub_id)

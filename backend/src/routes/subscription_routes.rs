@@ -230,7 +230,7 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
         assert_eq!(subscription.status, false);
-        
+
         let response = client.get(format!("/subscriptions/{}", 2)).dispatch();
         assert_eq!(response.status(), Status::Ok);
         let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
@@ -249,7 +249,7 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
         assert_eq!(subscription.status, true);
-        
+
         let response = client.get(format!("/subscriptions/{}", 2)).dispatch();
         assert_eq!(response.status(), Status::Ok);
         let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
