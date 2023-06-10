@@ -1,6 +1,6 @@
 import { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SUBSCRIPTION_CREATOR_ROUTE } from '../routes/routes';
+import { SUBSCRIPTION_CREATOR_ROUTE } from 'routes/routes';
 
 import { Button } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons';

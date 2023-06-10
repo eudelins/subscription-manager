@@ -104,6 +104,34 @@ pub async fn create_or_update_subscription(
     }
 }
 
+pub async fn update_subscriptions_status(
+    mut db: Connection<SubscriptionsDb>,
+    sub_ids: &[i32],
+    new_status: bool,
+) -> Option<()> {
+    let mut transaction = match db.begin().await {
+        Ok(tr) => tr,
+        Err(_) => return Option::None,
+    };
+    for id in sub_ids {
+        let result_dto = subscription_repository::update_subscription_status(
+            &mut transaction,
+            *id,
+            new_status,
+        )
+        .await
+        .map(SubscriptionDTO::from);
+        if result_dto.is_none() {
+            return rollback_and_return_none(transaction).await;
+        }
+    }
+    if let Err(err) = transaction.commit().await {
+        println!("Commit error : {:?}", err);
+        return Option::None;
+    };
+    Some(())
+}
+
 pub async fn delete_subscription_by_id(mut db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
     subscription_repository::delete_subscription_by_id(&mut db, id).await
 }

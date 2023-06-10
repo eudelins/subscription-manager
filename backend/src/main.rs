@@ -31,30 +31,32 @@ fn rocket() -> _ {
         .mount(
             "/subscriptions/",
             routes![
-                find_subscription_by_id,
-                find_all_subscriptions,
-                find_all_subscriptions_with_categories,
+                archive_subscription,
+                activate_subscription,
                 create_subscription,
                 delete_subscription_by_id,
+                find_all_subscriptions,
+                find_all_subscriptions_with_categories,
+                find_subscription_by_id,
                 update_subscription
             ],
         )
         .mount(
             "/brands/",
             routes![
-                find_brand_by_id,
-                find_all_brands,
                 create_brand,
-                delete_brand_by_id
+                delete_brand_by_id,
+                find_all_brands,
+                find_brand_by_id
             ],
         )
         .mount(
             "/categories/",
             routes![
-                find_category_by_id,
-                find_all_categories,
                 create_category,
-                delete_category_by_id
+                delete_category_by_id,
+                find_all_categories,
+                find_category_by_id
             ],
         )
         .mount("/dataviz/", routes![get_statistics])

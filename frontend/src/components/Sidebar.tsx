@@ -4,7 +4,7 @@ import {
   CUSTOMIZATION_ROUTE,
   DATA_VISUALIZATION_ROUTE,
   SUBSCRIPTION_MANAGER_ROUTE
-} from '../routes/routes';
+} from 'routes/routes';
 
 import { ContainerOutlined, DesktopOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';

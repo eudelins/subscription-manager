@@ -1,8 +1,8 @@
 import { CSSProperties, useState } from 'react';
 import { Card, Avatar, Checkbox } from 'antd';
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
 import { useNavigate } from 'react-router-dom';
-import { SUBSCRIPTION_PAGE_ROUTE } from '../routes/routes';
+import { SUBSCRIPTION_PAGE_ROUTE } from 'routes/routes';
 
 const LOGO_SIZE = 80;
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) {
-  const url = '../../src-tauri/icons/icon.png'; // TO CHANGE
+  const url = '../src-tauri/icons/icon.png'; // TO CHANGE
 
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) 
   const handleClick = () => {
     if (archiveMode) {
       setIsChecked(!isChecked);
+      onStatusUpdate();
     } else {
       navigate(SUBSCRIPTION_PAGE_ROUTE.replace(':id', subscription.id.toString()));
     }

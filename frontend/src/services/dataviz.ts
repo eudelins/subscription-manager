@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import Statistics from '../interfaces/dataviz/statistics.interface';
+import Statistics from 'interfaces/dataviz/statistics.interface';
 
 import { DATAVIZ_API_PATH } from './utils/path';
 

@@ -2,15 +2,22 @@ import { useState, CSSProperties } from 'react';
 
 import { Button, Space, Modal } from 'antd';
 import { FolderOpenOutlined } from '@ant-design/icons';
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
+import { archiveSubscriptions, getAllSubscriptions } from 'services/subscriptions';
 
 interface Props {
   archiveMode: boolean;
   setArchiveMode: (archiveMode: boolean) => void;
   subsToArchive: Subscription[];
+  setSubscriptions: React.Dispatch<React.SetStateAction<Subscription[]>>;
 }
 
-function ArchiveSubscriptionsButton({ archiveMode, setArchiveMode, subsToArchive }: Props) {
+function ArchiveSubscriptionsButton({
+  archiveMode,
+  setArchiveMode,
+  subsToArchive,
+  setSubscriptions
+}: Props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleButtonClick = () => {
@@ -21,12 +28,11 @@ function ArchiveSubscriptionsButton({ archiveMode, setArchiveMode, subsToArchive
     }
   };
 
-  const handleModalConfirm = () => {
-    // TO DO : API CALL
-    console.log('Archiving subscriptions : ');
-    console.log(subsToArchive);
+  const handleModalConfirm = async () => {
+    await archiveSubscriptions(subsToArchive);
     setOpenModal(false);
     setArchiveMode(false);
+    getAllSubscriptions().then((res) => setSubscriptions(res));
   };
 
   const archiveButtonStyle: CSSProperties = {

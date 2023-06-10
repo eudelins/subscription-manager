@@ -57,6 +57,21 @@ pub async fn create_or_update_subscription<'a>(
         .ok()
 }
 
+pub async fn update_subscription_status<'a>(
+    db: impl PgExecutor<'a>,
+    sub_id: i32,
+    new_status: bool
+) -> Option<SubscriptionDAO> {
+    sqlx::query("UPDATE Subscriptions SET status=$2 WHERE id=$1 RETURNING *;")
+        .bind(sub_id)
+        .bind(new_status)
+        .fetch_one(db)
+        .await
+        .and_then(|res| SubscriptionDAO::from_row(&res))
+        .map_err(|e| println!("Error: {:?}", e))
+        .ok()
+}
+
 pub async fn delete_subscription_by_id(
     db: &mut Connection<SubscriptionsDb>,
     id: i32,

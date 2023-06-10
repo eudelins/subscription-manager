@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
 import { SUBSCRIPTIONS_API_PATH } from './utils/path';
 
 export async function getAllSubscriptions(): Promise<Subscription[]> {
@@ -34,5 +34,18 @@ export async function createSubscription(
     brand_id: brandId,
     categories_id: categoriesId
   });
+  return reponse.status === 200;
+}
+
+export async function archiveSubscriptions(subIds: Subscription[]): Promise<boolean> {
+  const reponse = await axios.post(
+    SUBSCRIPTIONS_API_PATH + 'archive',
+    subIds.map((s) => s.id)
+  );
+  return reponse.status === 200;
+}
+
+export async function deleteSubscription(subscription: Subscription): Promise<boolean> {
+  const reponse = await axios.delete(SUBSCRIPTIONS_API_PATH + subscription.id.toString());
   return reponse.status === 200;
 }

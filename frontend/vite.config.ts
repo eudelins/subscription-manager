@@ -1,9 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const folderNames = ['assets', 'components', 'interfaces', 'pages', 'routes', 'services', 'src'];
+const folderPaths = folderNames.reduce((acc, folder) => {
+  acc[folder] = `/${folder === "src" ? folder : "src/" + folder}`;
+  return acc;
+}, {});
+
+
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   plugins: [react()],
+
+  resolve: {
+    alias: {
+      ...folderPaths
+    },
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   // prevent vite from obscuring rust errors

@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SUBSCRIPTION_MANAGER_ROUTE } from '../routes/routes';
+import { SUBSCRIPTION_MANAGER_ROUTE } from 'routes/routes';
 
 import { Button, Radio, Form, Input, Select, InputNumber } from 'antd';
 
-import { getAllBrands } from '../services/brands';
-import Brand from '../interfaces/brands/brand.interface';
-import { createSubscription } from '../services/subscriptions';
+import Brand from 'interfaces/brands/brand.interface';
+import Category from 'interfaces/categories/category.interface';
+import { getAllBrands } from 'services/brands';
+import { getAllCategories } from 'services/categories';
+import { createSubscription } from 'services/subscriptions';
 
 function SubscriptionCreator() {
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [categories, setCategories] = useState<string[]>(['Musique', 'Divertissement']); // TO FETCH WITH THE API
+  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     getAllBrands().then((res) => setBrands(res));
-    // getAllCategories().then((res) => setCategories(res));
+    getAllCategories().then((res) => setCategories(res));
   }, []);
 
   const navigate = useNavigate();
@@ -81,12 +83,10 @@ function SubscriptionCreator() {
           allowClear
           style={{ width: '100%' }}
           placeholder="Please select"
-          options={categories.map((category, index) => {
+          options={categories.map((category) => {
             return {
-              value: index,
-              label: category
-              // value: category.id,  TO APPLY WHEN API IMPLEMENTS CATEGORIES FETCHING
-              // label: category.name
+              value: category.id,
+              label: category.name
             };
           })}
         />

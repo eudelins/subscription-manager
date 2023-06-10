@@ -1,8 +1,8 @@
 import { Col, Row } from 'antd';
 
-import SubscriptionCell from '../components/SubscriptionCell';
+import SubscriptionCell from 'components/SubscriptionCell';
 
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
 
 const NUMBER_OF_CELLS_IN_GRID = 24;
 const NUMBER_OF_SUBS_IN_ROW = 4;
@@ -26,7 +26,9 @@ function SubscriptionsGrid({ subs, archiveMode, cellsSpacing, changeSubscription
                   <SubscriptionCell
                     subscription={sub}
                     archiveMode={archiveMode}
-                    onStatusUpdate={() => changeSubscriptionStatus(index)}
+                    onStatusUpdate={() =>
+                      changeSubscriptionStatus(index + rowIndex * NUMBER_OF_SUBS_IN_ROW)
+                    }
                   />
                 </Col>
               );
