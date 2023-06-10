@@ -49,6 +49,22 @@ pub async fn update_subscription(
         .map(Json)
 }
 
+#[post("/archive", format = "application/json", data = "<subs_id>")]
+pub async fn archive_subscription(
+    db: Connection<SubscriptionsDb>,
+    subs_id: Json<Vec<i32>>,
+) -> Option<()> {
+    subscription_service::update_subscriptions_status(db, &subs_id.into_inner(), false).await
+}
+
+#[post("/activate", format = "application/json", data = "<subs_id>")]
+pub async fn activate_subscription(
+    db: Connection<SubscriptionsDb>,
+    subs_id: Json<Vec<i32>>,
+) -> Option<()> {
+    subscription_service::update_subscriptions_status(db, &subs_id.into_inner(), true).await
+}
+
 #[delete("/<id>")]
 pub async fn delete_subscription_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Option<()> {
     subscription_service::delete_subscription_by_id(db, id).await
@@ -194,5 +210,49 @@ mod test {
         assert_eq!(subscription.price, 10.1);
         assert_eq!(subscription.status, true);
         assert_eq!(subscription.categories_id, vec![1, 2]);
+    }
+
+    #[test]
+    fn update_subscriptions_status_twice_and_find_by_id_twice_test() {
+        let client = get_test_client().lock().unwrap();
+
+        // Archive subs
+        let sub_ids = vec![1, 2];
+        let response = client
+            .post(uri!("/subscriptions", super::archive_subscription))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&sub_ids).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Check with fetch
+        let response = client.get(format!("/subscriptions/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.status, false);
+
+        let response = client.get(format!("/subscriptions/{}", 2)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.status, false);
+
+        // Go back to as it was
+        let response = client
+            .post(uri!("/subscriptions", super::activate_subscription))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&sub_ids).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Check with fetch
+        let response = client.get(format!("/subscriptions/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.status, true);
+
+        let response = client.get(format!("/subscriptions/{}", 2)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let subscription = response.into_json::<EntireSubscriptionDTO>().unwrap();
+        assert_eq!(subscription.status, true);
     }
 }

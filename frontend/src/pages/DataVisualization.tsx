@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { getStatistics } from '../services/dataviz';
-import Statistics from '../interfaces/dataviz/statistics.interface';
+import { getStatistics } from 'services/dataviz';
+import Statistics from 'interfaces/dataviz/statistics.interface';
 
 import { Card, Space } from 'antd';
 

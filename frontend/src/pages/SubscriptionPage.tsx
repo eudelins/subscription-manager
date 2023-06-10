@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { getSubscriptionById } from '../services/subscriptions';
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import { getSubscriptionById } from 'services/subscriptions';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
+import { Row } from 'antd';
+import DeleteSubscriptionsButton from 'components/buttons/DeleteSubscriptionButton';
 
 function SubscriptionManager() {
   const { id = '' } = useParams();
@@ -14,6 +16,9 @@ function SubscriptionManager() {
 
   return (
     <>
+      <Row justify="end">
+        {subscription && <DeleteSubscriptionsButton subscription={subscription} />}
+      </Row>
       <p>Id {subscription?.id}</p>
       <p>BrandId {subscription?.brandId}</p>
       <p>Name {subscription?.name}</p>

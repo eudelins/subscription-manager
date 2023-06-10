@@ -1,9 +1,9 @@
 import App from '../App';
-import SubscriptionManager from '../pages/SubscriptionManager';
-import DataVisualization from '../pages/DataVisualization';
-import Customization from '../pages/Customization';
-import SubscriptionCreator from '../pages/SubscriptionCreator';
-import SubscriptionPage from '../pages/SubscriptionPage';
+import SubscriptionManager from 'pages/SubscriptionManager';
+import DataVisualization from 'pages/DataVisualization';
+import Customization from 'pages/Customization';
+import SubscriptionCreator from 'pages/SubscriptionCreator';
+import SubscriptionPage from 'pages/SubscriptionPage';
 
 import { createBrowserRouter } from 'react-router-dom';
 import {

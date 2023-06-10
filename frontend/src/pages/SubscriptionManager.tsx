@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
 import { Row, Space } from 'antd';
-import AddSubscriptionButton from '../components/AddSubcriptionButton';
-import ArchiveSubscriptionsButton from '../components/ArchiveSubscriptionsButton';
-import DividerWithTitle from '../components/DividerWithTitle';
-import SubscriptionsGrid from '../components/SubscriptionsGrid';
+import AddSubscriptionButton from 'components/buttons/AddSubcriptionButton';
+import ArchiveSubscriptionsButton from 'components/buttons/ArchiveSubscriptionsButton';
+import DividerWithTitle from 'components/DividerWithTitle';
+import SubscriptionsGrid from 'components/SubscriptionsGrid';
 
-import { getAllSubscriptions } from '../services/subscriptions';
-import Subscription from '../interfaces/subscriptions/subscription.interface';
+import { getAllSubscriptions } from 'services/subscriptions';
+import Subscription from 'interfaces/subscriptions/subscription.interface';
 
 const SPACE_BETWEEN_CELLS = 16;
 
@@ -46,6 +46,7 @@ function SubscriptionManager() {
             archiveMode={archiveMode}
             setArchiveMode={setArchiveMode}
             subsToArchive={subscriptionsToArchive}
+            setSubscriptions={setSubscriptions}
           />
           <AddSubscriptionButton />
         </Space>
