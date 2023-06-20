@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 
 import { Row, Space } from 'antd';
 import AddSubscriptionButton from 'components/buttons/AddSubcriptionButton';
-import ArchiveSubscriptionsButton from 'components/buttons/ArchiveSubscriptionsButton';
 import DividerWithTitle from 'components/DividerWithTitle';
 import SubscriptionsGrid from 'components/SubscriptionsGrid';
 
 import { getAllSubscriptions } from 'services/subscriptions';
 import Subscription from 'interfaces/subscriptions/subscription.interface';
+import ChangeSubscriptionsStatusButton, {
+  StatusMode
+} from 'components/buttons/ChangeSubscriptionsStatusButton';
 
 const SPACE_BETWEEN_CELLS = 16;
 
@@ -15,23 +17,36 @@ function SubscriptionManager() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [subscriptionsToArchive, setSubscriptionsToArchive] = useState<Subscription[]>([]);
   const [archiveMode, setArchiveMode] = useState(false);
+  const [subscriptionsToActivate, setSubscriptionsToActivate] = useState<Subscription[]>([]);
+  const [activateMode, setActivateMode] = useState(false);
 
   useEffect(() => {
     getAllSubscriptions().then((res) => setSubscriptions(res));
   }, []);
 
-  const changeSubscriptionStatus = (index: number) => {
-    setSubscriptionsToArchive((prevSubscriptionsToArchive: Subscription[]) => {
-      const updatedSubscriptionsToArchive = [...prevSubscriptionsToArchive];
-      const archivedSubIndex = updatedSubscriptionsToArchive.findIndex((sub) => {
-        return sub.id === subscriptions[index].id;
+  const changeSubscriptionStatus = (subscription: Subscription, statusMode: StatusMode) => {
+    const setSubscriptionsToChangeStatus =
+      statusMode === StatusMode.Activate ? setSubscriptionsToActivate : setSubscriptionsToArchive;
+
+    setSubscriptionsToChangeStatus((prevSubscriptionsChangeStatus: Subscription[]) => {
+      const updatedSubscriptionsChangeStatus = [...prevSubscriptionsChangeStatus];
+      const updatedSubIndex = updatedSubscriptionsChangeStatus.findIndex((sub) => {
+        return sub.id === subscription.id;
       });
-      if (archivedSubIndex === -1) {
-        updatedSubscriptionsToArchive.push(subscriptions[index]);
+      if (updatedSubIndex === -1) {
+        updatedSubscriptionsChangeStatus.push(subscription);
       } else {
-        updatedSubscriptionsToArchive.splice(archivedSubIndex, 1);
+        updatedSubscriptionsChangeStatus.splice(updatedSubIndex, 1);
       }
-      return updatedSubscriptionsToArchive;
+      return updatedSubscriptionsChangeStatus;
+    });
+  };
+
+  const refreshSubscriptions = () => {
+    getAllSubscriptions().then((res) => {
+      setSubscriptions(res);
+      setSubscriptionsToActivate([]);
+      setSubscriptionsToArchive([]);
     });
   };
 
@@ -42,11 +57,12 @@ function SubscriptionManager() {
     <>
       <Row justify="end">
         <Space style={{ marginBottom: SPACE_BETWEEN_CELLS * 2 }} size="middle">
-          <ArchiveSubscriptionsButton
-            archiveMode={archiveMode}
-            setArchiveMode={setArchiveMode}
-            subsToArchive={subscriptionsToArchive}
-            setSubscriptions={setSubscriptions}
+          <ChangeSubscriptionsStatusButton
+            statusMode={StatusMode.Archive}
+            changeStatusMode={archiveMode}
+            setChangeStatusMode={setArchiveMode}
+            subsToChangeStatus={subscriptionsToArchive}
+            refreshSubscriptions={refreshSubscriptions}
           />
           <AddSubscriptionButton />
         </Space>
@@ -54,21 +70,33 @@ function SubscriptionManager() {
       {activeSubscriptions.length > 0 && <DividerWithTitle title="Vos abonnements en cours" />}
       <SubscriptionsGrid
         subs={activeSubscriptions}
-        archiveMode={archiveMode}
+        changeStatusMode={archiveMode}
         cellsSpacing={SPACE_BETWEEN_CELLS}
-        changeSubscriptionStatus={changeSubscriptionStatus}
+        changeSubscriptionStatus={(sub) => changeSubscriptionStatus(sub, StatusMode.Archive)}
       />
       {archivedSubscriptions.length > 0 && (
-        <DividerWithTitle
-          title="Vos abonnements archivés"
-          style={{ marginTop: SPACE_BETWEEN_CELLS * 4 }}
-        />
+        <>
+          <Row justify="end">
+            <Space
+              style={{ marginBottom: SPACE_BETWEEN_CELLS * 2, marginTop: SPACE_BETWEEN_CELLS * 4 }}
+              size="middle">
+              <ChangeSubscriptionsStatusButton
+                statusMode={StatusMode.Activate}
+                changeStatusMode={activateMode}
+                setChangeStatusMode={setActivateMode}
+                subsToChangeStatus={subscriptionsToActivate}
+                refreshSubscriptions={refreshSubscriptions}
+              />
+            </Space>
+          </Row>
+          <DividerWithTitle title="Vos abonnements archivés" />
+        </>
       )}
       <SubscriptionsGrid
         subs={archivedSubscriptions}
-        archiveMode={false}
+        changeStatusMode={activateMode}
         cellsSpacing={SPACE_BETWEEN_CELLS}
-        changeSubscriptionStatus={(_) => {}}
+        changeSubscriptionStatus={(index) => changeSubscriptionStatus(index, StatusMode.Activate)}
       />
     </>
   );

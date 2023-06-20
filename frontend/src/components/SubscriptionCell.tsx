@@ -8,18 +8,18 @@ const LOGO_SIZE = 80;
 
 interface Props {
   subscription: Subscription;
-  archiveMode: boolean;
+  changeStatusMode: boolean;
   onStatusUpdate: () => void;
 }
 
-function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) {
+function SubscriptionCell({ subscription, changeStatusMode, onStatusUpdate }: Props) {
   const url = '../src-tauri/icons/icon.png'; // TO CHANGE
 
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (archiveMode) {
+    if (changeStatusMode) {
       setIsChecked(!isChecked);
       onStatusUpdate();
     } else {
@@ -42,7 +42,7 @@ function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) 
         <Checkbox
           checked={isChecked}
           onChange={handleStatusChange}
-          style={{ visibility: archiveMode ? 'visible' : 'hidden' }}
+          style={{ visibility: changeStatusMode ? 'visible' : 'hidden' }}
         />
       </Card>
     </div>

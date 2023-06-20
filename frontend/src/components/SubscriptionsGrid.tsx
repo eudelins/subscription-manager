@@ -9,26 +9,29 @@ const NUMBER_OF_SUBS_IN_ROW = 4;
 
 interface Props {
   subs: Subscription[];
-  archiveMode: boolean;
+  changeStatusMode: boolean;
   cellsSpacing: number;
-  changeSubscriptionStatus: (index: number) => void;
+  changeSubscriptionStatus: (sub: Subscription) => void;
 }
 
-function SubscriptionsGrid({ subs, archiveMode, cellsSpacing, changeSubscriptionStatus }: Props) {
+function SubscriptionsGrid({
+  subs,
+  changeStatusMode,
+  cellsSpacing,
+  changeSubscriptionStatus
+}: Props) {
   return (
     <>
       {createRange(getNumberOfRows(subs)).map((rowIndex) => {
         return (
           <Row gutter={cellsSpacing} key={rowIndex} style={{ marginBottom: cellsSpacing }}>
-            {getOneRow(subs, rowIndex).map((sub, index) => {
+            {getOneRow(subs, rowIndex).map((sub) => {
               return (
                 <Col span={NUMBER_OF_CELLS_IN_GRID / NUMBER_OF_SUBS_IN_ROW} key={sub.id}>
                   <SubscriptionCell
                     subscription={sub}
-                    archiveMode={archiveMode}
-                    onStatusUpdate={() =>
-                      changeSubscriptionStatus(index + rowIndex * NUMBER_OF_SUBS_IN_ROW)
-                    }
+                    changeStatusMode={changeStatusMode}
+                    onStatusUpdate={() => changeSubscriptionStatus(sub)}
                   />
                 </Col>
               );

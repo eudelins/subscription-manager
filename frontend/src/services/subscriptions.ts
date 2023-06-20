@@ -37,9 +37,36 @@ export async function createSubscription(
   return reponse.status === 200;
 }
 
+export async function updateSubscription(
+  id: number,
+  name: string,
+  price: number,
+  status: boolean,
+  brandId: number,
+  categoriesId: number[]
+): Promise<boolean> {
+  const reponse = await axios.put(SUBSCRIPTIONS_API_PATH, {
+    id,
+    name,
+    price,
+    status,
+    brand_id: brandId,
+    categories_id: categoriesId
+  });
+  return reponse.status === 200;
+}
+
 export async function archiveSubscriptions(subIds: Subscription[]): Promise<boolean> {
   const reponse = await axios.post(
     SUBSCRIPTIONS_API_PATH + 'archive',
+    subIds.map((s) => s.id)
+  );
+  return reponse.status === 200;
+}
+
+export async function activateSubscriptions(subIds: Subscription[]): Promise<boolean> {
+  const reponse = await axios.post(
+    SUBSCRIPTIONS_API_PATH + 'activate',
     subIds.map((s) => s.id)
   );
   return reponse.status === 200;
