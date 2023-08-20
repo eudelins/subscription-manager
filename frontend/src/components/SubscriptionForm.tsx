@@ -89,15 +89,26 @@ function SubscriptionForm({ subscription, onFinish, isDisabled, style }: Props) 
           })}
         />
       </Form.Item>
-      <Form.Item>
-        <Button htmlType="submit">Submit</Button>
-      </Form.Item>
+      {!subscription && (
+        <Form.Item wrapperCol={{ offset: 13, span: 16 }}>
+          <Button shape='round' style={buttonStyle} htmlType="submit">Valider</Button>
+        </Form.Item>
+      )}
     </Form>
   );
 }
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
+};
+
+const buttonStyle: CSSProperties = {
+  backgroundColor: '#1DB954',
+  color: 'white',
+  fontSize: 17,
+  fontWeight: 'bold',
+  height: 50,
+  width: 120
 };
 
 export default SubscriptionForm;

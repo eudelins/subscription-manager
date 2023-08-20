@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { Row, Space } from 'antd';
-import AddSubscriptionButton from 'components/buttons/AddSubcriptionButton';
+import AddSubscriptionButton from 'components/Buttons/AddSubcriptionButton';
 import DividerWithTitle from 'components/DividerWithTitle';
 import SubscriptionsGrid from 'components/SubscriptionsGrid';
 
@@ -9,7 +9,7 @@ import { getAllSubscriptions } from 'services/subscriptions';
 import Subscription from 'interfaces/subscriptions/subscription.interface';
 import ChangeSubscriptionsStatusButton, {
   StatusMode
-} from 'components/buttons/ChangeSubscriptionsStatusButton';
+} from 'components/Buttons/ChangeSubscriptionsStatusButton';
 
 const SPACE_BETWEEN_CELLS = 16;
 

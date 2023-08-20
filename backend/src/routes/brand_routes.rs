@@ -20,7 +20,17 @@ pub async fn create_brand(
     db: Connection<SubscriptionsDb>,
     new_brand: Json<BrandDTO>,
 ) -> Option<Json<BrandDTO>> {
-    brand_service::create_brand(db, new_brand.into_inner())
+    brand_service::create_or_update_brand(db, new_brand.into_inner(), false)
+        .await
+        .map(Json)
+}
+
+#[put("/", format = "application/json", data = "<new_brand>")]
+pub async fn update_brand(
+    db: Connection<SubscriptionsDb>,
+    new_brand: Json<BrandDTO>,
+) -> Option<Json<BrandDTO>> {
+    brand_service::create_or_update_brand(db, new_brand.into_inner(), true)
         .await
         .map(Json)
 }
@@ -49,7 +59,7 @@ mod test {
         let brands = response.into_json::<Vec<BrandDTO>>().unwrap();
         assert_eq!(brands.len(), 3);
 
-        let test_brand = brands.first().unwrap();
+        let test_brand = brands.iter().find(|s| s.id == 1).unwrap();
         assert_eq!(test_brand.id, 1);
         assert_eq!(test_brand.name, "Amazon");
         assert!(test_brand.logo.is_none());
@@ -93,5 +103,55 @@ mod test {
 
         let response = client.delete(format!("/brands/{}", brand.id)).dispatch();
         assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn update_brand_twice_and_find_by_id_test() {
+        let client = get_test_client().lock().unwrap();
+
+        // Update
+        let new_brand = BrandDTO {
+            id: 1,
+            name: String::from("test_update"),
+            logo: Option::None,
+        };
+        let response = client
+            .put(uri!("/brands", super::update_brand))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&new_brand).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let brand = response.into_json::<BrandDTO>().unwrap();
+        assert_eq!(brand.name, "test_update");
+        assert_eq!(brand.logo, Option::None);
+
+        // Check with fetch
+        let response = client.get(format!("/brands/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let brand = response.into_json::<BrandDTO>().unwrap();
+        assert_eq!(brand.id, 1);
+        assert_eq!(brand.name, "test_update");
+        assert_eq!(brand.logo, Option::None);
+
+        // Go back to as it was
+        let original_sub = BrandDTO {
+            id: 1,
+            name: String::from("Amazon"),
+            logo: Option::None,
+        };
+        let response = client
+            .put(uri!("/brands", super::update_brand))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&original_sub).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Check with fetch
+        let response = client.get(format!("/brands/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let brand = response.into_json::<BrandDTO>().unwrap();
+        assert_eq!(brand.id, 1);
+        assert_eq!(brand.name, "Amazon");
+        assert_eq!(brand.logo, Option::None);
     }
 }

@@ -18,18 +18,18 @@ export async function deleteBrandById(id: string): Promise<boolean> {
   return reponse.status === 200;
 }
 
-export async function createBrand(name: string): Promise<boolean> {
+export async function createBrand(name: string): Promise<Brand> {
   const reponse = await axios.post(BRANDS_API_PATH, {
     id: -1,
     name
   });
-  return reponse.status === 200;
+  return reponse.data;
 }
 
-export async function updateBrand(id: number, name: string): Promise<boolean> {
+export async function updateBrand(id: number, name: string): Promise<Brand> {
   const reponse = await axios.put(BRANDS_API_PATH, {
     id,
     name
   });
-  return reponse.status === 200;
+  return reponse.data;
 }

@@ -1,7 +1,7 @@
 interface Brand {
   id: number;
   name: string;
-  logo: string | undefined;
+  logo: string | null;
 }
 
 export default Brand;

@@ -13,8 +13,6 @@ interface Props {
 }
 
 function SubscriptionCell({ subscription, changeStatusMode, onStatusUpdate }: Props) {
-  const url = '../src-tauri/icons/icon.png'; // TO CHANGE
-
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -37,7 +35,13 @@ function SubscriptionCell({ subscription, changeStatusMode, onStatusUpdate }: Pr
         style={{ textAlign: 'center', border: '2px solid #f0f0f0' }}
         hoverable
         onClick={handleClick}>
-        <Avatar size={LOGO_SIZE} src={url} alt="logo" />
+        {subscription && (
+          <Avatar
+            size={LOGO_SIZE}
+            src={import.meta.env.VITE_BASEURL + 'uploads/brands/' + subscription.brandId}
+            alt="logo"
+          />
+        )}
         <div style={cardTitleStyle}>{subscription.name.toUpperCase()}</div>
         <Checkbox
           checked={isChecked}

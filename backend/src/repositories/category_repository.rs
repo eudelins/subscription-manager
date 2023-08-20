@@ -28,13 +28,21 @@ pub async fn find_category_by_id(
         .ok()
 }
 
-pub async fn create_category(
+pub async fn create_or_update_category<'a>(
     mut db: Connection<SubscriptionsDb>,
-    new_catgeory: CategoryDAO,
+    new_category: CategoryDAO,
+    is_update: bool,
 ) -> Option<CategoryDAO> {
-    sqlx::query("INSERT INTO Categories (name, icon) VALUES ($1, $2) RETURNING *;")
-        .bind(new_catgeory.name)
-        .bind(new_catgeory.icon)
+    let query = if is_update {
+        sqlx::query("UPDATE Categories SET name=$2, icon=$3 WHERE id=$1 RETURNING *;")
+            .bind(new_category.id)
+    } else {
+        sqlx::query("INSERT INTO Categories (name, icon) VALUES ($1, $2) RETURNING *;")
+    };
+
+    query
+        .bind(new_category.name)
+        .bind(new_category.icon)
         .fetch_one(&mut *db)
         .await
         .and_then(|res| CategoryDAO::from_row(&res))
@@ -67,4 +75,20 @@ pub async fn add_subscription_to_category(
         .ok()
         .filter(|res| res.rows_affected() == 1)
         .map(|_| ())
+}
+
+pub async fn update_category_icon<'a>(
+    mut db: Connection<SubscriptionsDb>,
+    id: i32,
+    icon_path: Option<&str>,
+) -> Option<()> {
+    let query = sqlx::query("UPDATE Categories SET icon=$2 WHERE id=$1 RETURNING *;");
+    query
+        .bind(id)
+        .bind(icon_path)
+        .fetch_one(&mut *db)
+        .await
+        .map(|_| ())
+        .map_err(|e| println!("Error: {:?}", e))
+        .ok()
 }

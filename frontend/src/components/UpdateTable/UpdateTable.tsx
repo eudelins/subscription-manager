@@ -1,52 +1,14 @@
 import { useState } from 'react';
 
-import { Button, Form, Input, Popconfirm, Space, Table, Typography } from 'antd';
+import { Form, Popconfirm, Space, Table, Typography } from 'antd';
+import EditableCell from 'components/UpdateTable/EditableCell';
 
 import Brand from 'interfaces/brands/brand.interface';
 import Category from 'interfaces/categories/category.interface';
 import { createBrand, deleteBrandById, updateBrand } from 'services/brands';
 import { createCategory, deleteCategoryById, updateCategory } from 'services/categories';
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  inputType: 'text';
-  record: Category | Brand;
-  index: number;
-  children: React.ReactNode;
-}
-
-const EditableCell: React.FC<EditableCellProps> = ({
-  editing,
-  dataIndex,
-  title,
-  inputType,
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`
-            }
-          ]}>
-          <Input />
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
+import ImageModal from 'components/UpdateTable/ImageModal';
+import AddElementButton from 'components/UpdateTable/AddElementButton';
 
 export enum TableMode {
   Brand,
@@ -60,19 +22,24 @@ interface Props {
   setCategories: React.Dispatch<React.SetStateAction<Category[]>>;
 }
 
-const NEW_ELEM_ID = -2;
+export const NEW_ELEM_ID = -2;
 
 function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState(-1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [openModalElemId, setOpenModalElemId] = useState(-1);
   const isEditing = (record: Category | Brand) => record.id === editingId;
 
-  const setElements = (elements: Category[] | Brand[]) => {
-    if (mode === TableMode.Category) {
-      setCategories(elements as Category[]);
-    } else {
-      setBrands(elements as Brand[]);
-    }
+  const openModal = (id: number) => {
+    setIsModalOpen(true);
+    setOpenModalElemId(id);
+  };
+
+  const setElements = (elements: (Category | Brand)[]) => {
+    mode === TableMode.Category
+      ? setCategories(elements as Category[])
+      : setBrands(elements as Brand[]);
   };
 
   const edit = (record: Partial<Category | Brand> & { id: number }) => {
@@ -91,29 +58,25 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
 
   const save = async (id: number) => {
     try {
-      const row = (await form.validateFields()) as Category | Brand;
+      let row = (await form.validateFields()) as Category | Brand;
 
       const newElements = [...elements];
       const index = newElements.findIndex((item) => id === item.id);
       if (index > -1) {
+        row =
+          id === NEW_ELEM_ID
+            ? mode === TableMode.Brand
+              ? await createBrand(row.name)
+              : await createCategory(row.name)
+            : mode === TableMode.Brand
+            ? await updateBrand(id, row.name)
+            : await updateCategory(id, row.name);
+
         const item = newElements[index];
         newElements.splice(index, 1, {
           ...item,
           ...row
         });
-        if (id === NEW_ELEM_ID) {
-          if (mode === TableMode.Brand) {
-            createBrand(row.name);
-          } else {
-            createCategory(row.name);
-          }
-        } else {
-          if (mode === TableMode.Brand) {
-            updateBrand(id, row.name);
-          } else {
-            updateCategory(id, row.name);
-          }
-        }
         setElements(newElements);
         setEditingId(-1);
       } else {
@@ -127,13 +90,10 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
   const deleteElement = async (id: number) => {
     const index = elements.findIndex((item) => id === item.id);
     if (index > -1) {
-      if (mode === TableMode.Brand) {
-        deleteBrandById(elements[index].id.toString());
-      } else {
-        deleteCategoryById(elements[index].id.toString());
-      }
-      const newElements = [...elements];
-      newElements.splice(index, 1);
+      mode === TableMode.Brand
+        ? deleteBrandById(elements[index].id.toString())
+        : deleteCategoryById(elements[index].id.toString());
+      const newElements = [...elements].splice(index, 1);
       setElements(newElements);
     }
   };
@@ -142,15 +102,20 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
     {
       title: 'Nom ' + (mode === TableMode.Brand ? 'du fournisseur' : 'de la catégorie'),
       dataIndex: 'name',
-      width: '85%',
+      width: '60%',
+      editable: true
+    },
+    {
+      title: mode === TableMode.Brand ? 'Logo' : 'Icône',
+      dataIndex: 'file',
+      width: '25%',
       editable: true
     },
     {
       title: 'Operation',
       dataIndex: 'operation',
       render: (_: any, record: Category | Brand) => {
-        const editable = isEditing(record);
-        return editable ? (
+        return isEditing(record) ? (
           <span>
             <Typography.Link onClick={() => save(record.id)} style={{ marginRight: 8 }}>
               Enregistrer
@@ -176,47 +141,36 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
   ];
 
   const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
+    if (!col.editable) return col;
     return {
       ...col,
       onCell: (record: Category | Brand) => ({
         record,
-        inputType: 'text',
+        inputType: col.dataIndex === 'file' ? 'file' : 'text',
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record)
+        editing: isEditing(record),
+        openModal: openModal,
+        mode
       })
     };
   });
 
-  const handleAdd = () => {
-    const newData =
-      mode === TableMode.Brand
-        ? ({
-            id: NEW_ELEM_ID,
-            name: '',
-            logo: undefined
-          } as Brand)
-        : ({
-            id: NEW_ELEM_ID,
-            name: '',
-            icon: undefined
-          } as Category);
-    setElements([...elements, newData]);
-    setEditingId(NEW_ELEM_ID);
-  };
-
   return (
     <>
-      <Button
-        disabled={editingId !== -1}
-        onClick={handleAdd}
-        type="primary"
-        style={{ marginBottom: 16 }}>
-        Add a row
-      </Button>
+      <ImageModal
+        isModalOpen={isModalOpen}
+        elemId={openModalElemId}
+        setIsModalOpen={setIsModalOpen}
+        mode={mode}
+      />
+      <AddElementButton
+        mode={mode}
+        editingId={editingId}
+        setEditingId={setEditingId}
+        elements={elements}
+        setElements={setElements}
+      />
       <Form form={form} component={false}>
         <Table
           components={{
@@ -227,7 +181,6 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
           bordered
           dataSource={elements}
           columns={mergedColumns}
-          rowClassName="editable-row"
           pagination={{
             onChange: cancel,
             hideOnSinglePage: true

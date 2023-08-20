@@ -18,18 +18,18 @@ export async function deleteCategoryById(id: string): Promise<boolean> {
   return reponse.status === 200;
 }
 
-export async function createCategory(name: string): Promise<boolean> {
+export async function createCategory(name: string): Promise<Category> {
   const reponse = await axios.post(CATEGORIES_API_PATH, {
     id: -1,
     name
   });
-  return reponse.status === 200;
+  return reponse.data;
 }
 
-export async function updateCategory(id: number, name: string): Promise<boolean> {
+export async function updateCategory(id: number, name: string): Promise<Category> {
   const reponse = await axios.put(CATEGORIES_API_PATH, {
     id,
     name
   });
-  return reponse.status === 200;
+  return reponse.data;
 }

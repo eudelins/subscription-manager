@@ -4,8 +4,17 @@ import Subscription from 'interfaces/subscriptions/subscription.interface';
 import { SUBSCRIPTIONS_API_PATH } from './utils/path';
 
 export async function getAllSubscriptions(): Promise<Subscription[]> {
-  const subscriptions = await axios.get<Subscription[]>(SUBSCRIPTIONS_API_PATH);
-  return subscriptions.data;
+  const subscriptions = await axios.get(SUBSCRIPTIONS_API_PATH);
+  return subscriptions.data.map((sub: any) => {
+    return {
+      id: sub.id,
+      brandId: sub.brand_id,
+      name: sub.name,
+      price: sub.price,
+      status: sub.status,
+      categoriesId: sub.categories_id
+    };
+  });
 }
 
 export async function getSubscriptionById(id: string): Promise<Subscription> {

@@ -4,7 +4,7 @@ import { getAllBrands } from 'services/brands';
 import { getAllCategories } from 'services/categories';
 import Brand from 'interfaces/brands/brand.interface';
 import Category from 'interfaces/categories/category.interface';
-import UpdateTable, { TableMode } from 'components/UpdateTable';
+import UpdateTable, { TableMode } from 'components/UpdateTable/UpdateTable';
 import { Space } from 'antd';
 
 function Customization() {

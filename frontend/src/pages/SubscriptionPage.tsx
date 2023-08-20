@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 
 import { Row, Space } from 'antd';
 
-import DeleteSubscriptionsButton from 'components/buttons/DeleteSubscriptionButton';
-import EditSubscriptionButton from 'components/buttons/EditSubscriptionButton';
+import DeleteSubscriptionsButton from 'components/Buttons/DeleteSubscriptionButton';
+import EditSubscriptionButton from 'components/Buttons/EditSubscriptionButton';
 import SubscriptionForm from 'components/SubscriptionForm';
 
 import Brand from 'interfaces/brands/brand.interface';

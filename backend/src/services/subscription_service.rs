@@ -43,7 +43,7 @@ pub async fn find_all_subscriptions_with_categories(
         .into_iter()
         .map(EntireSubscriptionDTO::from)
         .collect::<Vec<EntireSubscriptionDTO>>();
-    for mut sub in subs_dto.iter_mut() {
+    for sub in subs_dto.iter_mut() {
         sub.categories_id =
             subscription_repository::fetch_subscription_categories_id(&mut db, sub.id).await;
     }
@@ -53,7 +53,7 @@ pub async fn find_all_subscriptions_with_categories(
 pub async fn create_or_update_subscription(
     mut db: Connection<SubscriptionsDb>,
     new_sub_dto: CreateOrUpdateSubscriptionDTO,
-    is_updated: bool,
+    is_update: bool,
 ) -> Option<SubscriptionDTO> {
     let mut transaction = match db.begin().await {
         Ok(tr) => tr,
@@ -65,13 +65,13 @@ pub async fn create_or_update_subscription(
     let result_dto = subscription_repository::create_or_update_subscription(
         &mut transaction,
         new_sub,
-        is_updated,
+        is_update,
     )
     .await
     .map(SubscriptionDTO::from);
 
     if let Some(res_dto_inner) = result_dto {
-        if is_updated {
+        if is_update {
             let successful_remove =
                 subscription_repository::remove_subscription_from_all_categories(
                     &mut transaction,
