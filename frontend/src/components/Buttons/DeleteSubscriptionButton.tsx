@@ -43,7 +43,7 @@ function DeleteSubscriptionsButton({ subscription }: Props) {
         danger>
         <Space>
           <DeleteOutlined />
-          Supprimer l'abonnement
+          Supprimer l&apos;abonnement
         </Space>
       </Button>
       <Modal

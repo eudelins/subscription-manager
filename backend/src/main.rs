@@ -6,7 +6,7 @@ use rocket_db_pools::{sqlx, Database};
 use fairings::cors::CORS;
 use routes::{
     brand_routes::*, category_routes::*, dataviz_routes::*, healthcheck::healthcheck,
-    subscription_routes::*,
+    subscription_routes::*, upload_routes::*,
 };
 use utils::get_config;
 
@@ -47,7 +47,8 @@ fn rocket() -> _ {
                 create_brand,
                 delete_brand_by_id,
                 find_all_brands,
-                find_brand_by_id
+                find_brand_by_id,
+                update_brand
             ],
         )
         .mount(
@@ -56,8 +57,10 @@ fn rocket() -> _ {
                 create_category,
                 delete_category_by_id,
                 find_all_categories,
-                find_category_by_id
+                find_category_by_id,
+                update_category
             ],
         )
         .mount("/dataviz/", routes![get_statistics])
+        .mount("/uploads/", routes![retrieve, upload, delete_file])
 }

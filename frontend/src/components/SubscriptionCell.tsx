@@ -8,18 +8,16 @@ const LOGO_SIZE = 80;
 
 interface Props {
   subscription: Subscription;
-  archiveMode: boolean;
+  changeStatusMode: boolean;
   onStatusUpdate: () => void;
 }
 
-function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) {
-  const url = '../src-tauri/icons/icon.png'; // TO CHANGE
-
+function SubscriptionCell({ subscription, changeStatusMode, onStatusUpdate }: Props) {
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = () => {
-    if (archiveMode) {
+    if (changeStatusMode) {
       setIsChecked(!isChecked);
       onStatusUpdate();
     } else {
@@ -37,12 +35,18 @@ function SubscriptionCell({ subscription, archiveMode, onStatusUpdate }: Props) 
         style={{ textAlign: 'center', border: '2px solid #f0f0f0' }}
         hoverable
         onClick={handleClick}>
-        <Avatar size={LOGO_SIZE} src={url} alt="logo" />
+        {subscription && (
+          <Avatar
+            size={LOGO_SIZE}
+            src={import.meta.env.VITE_BASEURL + 'uploads/brands/' + subscription.brandId}
+            alt="logo"
+          />
+        )}
         <div style={cardTitleStyle}>{subscription.name.toUpperCase()}</div>
         <Checkbox
           checked={isChecked}
           onChange={handleStatusChange}
-          style={{ visibility: archiveMode ? 'visible' : 'hidden' }}
+          style={{ visibility: changeStatusMode ? 'visible' : 'hidden' }}
         />
       </Card>
     </div>

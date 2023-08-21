@@ -4,8 +4,17 @@ import Subscription from 'interfaces/subscriptions/subscription.interface';
 import { SUBSCRIPTIONS_API_PATH } from './utils/path';
 
 export async function getAllSubscriptions(): Promise<Subscription[]> {
-  const subscriptions = await axios.get<Subscription[]>(SUBSCRIPTIONS_API_PATH);
-  return subscriptions.data;
+  const subscriptions = await axios.get(SUBSCRIPTIONS_API_PATH);
+  return subscriptions.data.map((sub: any) => {
+    return {
+      id: sub.id,
+      brandId: sub.brand_id,
+      name: sub.name,
+      price: sub.price,
+      status: sub.status,
+      categoriesId: sub.categories_id
+    };
+  });
 }
 
 export async function getSubscriptionById(id: string): Promise<Subscription> {
@@ -37,9 +46,36 @@ export async function createSubscription(
   return reponse.status === 200;
 }
 
+export async function updateSubscription(
+  id: number,
+  name: string,
+  price: number,
+  status: boolean,
+  brandId: number,
+  categoriesId: number[]
+): Promise<boolean> {
+  const reponse = await axios.put(SUBSCRIPTIONS_API_PATH, {
+    id,
+    name,
+    price,
+    status,
+    brand_id: brandId,
+    categories_id: categoriesId
+  });
+  return reponse.status === 200;
+}
+
 export async function archiveSubscriptions(subIds: Subscription[]): Promise<boolean> {
   const reponse = await axios.post(
     SUBSCRIPTIONS_API_PATH + 'archive',
+    subIds.map((s) => s.id)
+  );
+  return reponse.status === 200;
+}
+
+export async function activateSubscriptions(subIds: Subscription[]): Promise<boolean> {
+  const reponse = await axios.post(
+    SUBSCRIPTIONS_API_PATH + 'activate',
     subIds.map((s) => s.id)
   );
   return reponse.status === 200;

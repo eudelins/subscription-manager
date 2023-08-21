@@ -20,12 +20,13 @@ pub async fn find_all_categories(db: Connection<SubscriptionsDb>) -> Vec<Categor
         .collect()
 }
 
-pub async fn create_category(
+pub async fn create_or_update_category(
     db: Connection<SubscriptionsDb>,
     new_cat_dto: CategoryDTO,
+    is_update: bool,
 ) -> Option<CategoryDTO> {
     let new_cat = CategoryDAO::from(new_cat_dto);
-    category_repository::create_category(db, new_cat)
+    category_repository::create_or_update_category(db, new_cat, is_update)
         .await
         .map(CategoryDTO::from)
 }
@@ -43,4 +44,12 @@ pub async fn add_subscription_to_categories(
         category_repository::add_subscription_to_category(&mut *db_conn, sub_id, *cat_id).await?;
     }
     Some(())
+}
+
+pub async fn update_category_icon(
+    db: Connection<SubscriptionsDb>,
+    id: i32,
+    icon_path: Option<&str>,
+) -> Option<()> {
+    category_repository::update_category_icon(db, id, icon_path).await
 }

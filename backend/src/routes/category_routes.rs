@@ -23,7 +23,17 @@ pub async fn create_category(
     db: Connection<SubscriptionsDb>,
     new_category: Json<CategoryDTO>,
 ) -> Option<Json<CategoryDTO>> {
-    category_service::create_category(db, new_category.into_inner())
+    category_service::create_or_update_category(db, new_category.into_inner(), false)
+        .await
+        .map(Json)
+}
+
+#[put("/", format = "application/json", data = "<new_category>")]
+pub async fn update_category(
+    db: Connection<SubscriptionsDb>,
+    new_category: Json<CategoryDTO>,
+) -> Option<Json<CategoryDTO>> {
+    category_service::create_or_update_category(db, new_category.into_inner(), true)
         .await
         .map(Json)
 }
@@ -52,7 +62,7 @@ mod test {
         let categories = response.into_json::<Vec<CategoryDTO>>().unwrap();
         assert_eq!(categories.len(), 2);
 
-        let test_category = categories.first().unwrap();
+        let test_category = categories.iter().find(|s| s.id == 1).unwrap();
         assert_eq!(test_category.id, 1);
         assert_eq!(test_category.name, "Divertissement");
         assert!(test_category.icon.is_none());
@@ -100,5 +110,55 @@ mod test {
             .delete(format!("/categories/{}", category.id))
             .dispatch();
         assert_eq!(response.status(), Status::Ok);
+    }
+
+    #[test]
+    fn update_category_twice_and_find_by_id_test() {
+        let client = get_test_client().lock().unwrap();
+
+        // Update
+        let new_category = CategoryDTO {
+            id: 1,
+            name: String::from("test_update"),
+            icon: Option::None,
+        };
+        let response = client
+            .put(uri!("/categories", super::update_category))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&new_category).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let category = response.into_json::<CategoryDTO>().unwrap();
+        assert_eq!(category.name, "test_update");
+        assert_eq!(category.icon, Option::None);
+
+        // Check with fetch
+        let response = client.get(format!("/categories/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let category = response.into_json::<CategoryDTO>().unwrap();
+        assert_eq!(category.id, 1);
+        assert_eq!(category.name, "test_update");
+        assert_eq!(category.icon, Option::None);
+
+        // Go back to as it was
+        let original_sub = CategoryDTO {
+            id: 1,
+            name: String::from("Divertissement"),
+            icon: Option::None,
+        };
+        let response = client
+            .put(uri!("/categories", super::update_category))
+            .header(Header::new("Content-type", "application/json"))
+            .body(to_string(&original_sub).expect("Deserealization failed"))
+            .dispatch();
+        assert_eq!(response.status(), Status::Ok);
+
+        // Check with fetch
+        let response = client.get(format!("/categories/{}", 1)).dispatch();
+        assert_eq!(response.status(), Status::Ok);
+        let category = response.into_json::<CategoryDTO>().unwrap();
+        assert_eq!(category.id, 1);
+        assert_eq!(category.name, "Divertissement");
+        assert_eq!(category.icon, Option::None);
     }
 }
