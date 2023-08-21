@@ -2,8 +2,7 @@
 
 CREATE TABLE Brands (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    logo VARCHAR(255)
+    name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Subscriptions (
@@ -12,18 +11,12 @@ CREATE TABLE Subscriptions (
     name VARCHAR(50) NOT NULL,
     price REAL NOT NULL,
     status BOOLEAN NOT NULL,
-    logo VARCHAR(255),
-    subscribe_link VARCHAR(255),
-    unsubscribe_link VARCHAR(255),
-    start_date DATE,
-    end_date DATE,
     FOREIGN KEY (brand_id) REFERENCES Brands(id) ON DELETE RESTRICT
 );
 
 CREATE TABLE Categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    icon VARCHAR(255)
+    name VARCHAR(50) NOT NULL
 );
 
 

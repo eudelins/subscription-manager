@@ -6,7 +6,6 @@ use crate::dao_entities::category_dao::CategoryDAO;
 pub struct CategoryDTO {
     pub id: i32,
     pub name: String,
-    pub icon: Option<String>,
 }
 
 impl From<CategoryDAO> for CategoryDTO {
@@ -14,7 +13,6 @@ impl From<CategoryDAO> for CategoryDTO {
         CategoryDTO {
             id: category_dao.id,
             name: category_dao.name,
-            icon: category_dao.icon,
         }
     }
 }

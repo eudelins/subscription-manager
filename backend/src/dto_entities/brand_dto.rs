@@ -6,7 +6,6 @@ use crate::dao_entities::brand_dao::BrandDAO;
 pub struct BrandDTO {
     pub id: i32,
     pub name: String,
-    pub logo: Option<String>,
 }
 
 impl From<BrandDAO> for BrandDTO {
@@ -14,7 +13,6 @@ impl From<BrandDAO> for BrandDTO {
         BrandDTO {
             id: brand_dao.id,
             name: brand_dao.name,
-            logo: brand_dao.logo,
         }
     }
 }

@@ -1,8 +1,6 @@
-use crate::SubscriptionsDb;
 use crate::{dto_entities::upload_dto::UploadType, services::upload_service};
 
 use rocket::{form::Form, fs::TempFile, tokio::fs::File};
-use rocket_db_pools::Connection;
 use std::{io, str::FromStr};
 
 #[get("/<upload_dir>/<id>")]
@@ -18,23 +16,18 @@ pub struct FileUpload<'r> {
 
 #[post("/<upload_dir>/<id>", data = "<upload_req>")]
 pub async fn upload(
-    db: Connection<SubscriptionsDb>,
     id: i32,
     upload_dir: &str,
     mut upload_req: Form<FileUpload<'_>>,
 ) -> io::Result<()> {
     let upload_type = UploadType::from_str(upload_dir)?;
-    upload_service::upload_file(db, &mut upload_req.file, upload_type, id).await
+    upload_service::upload_file(&mut upload_req.file, upload_type, id).await
 }
 
 #[delete("/<upload_dir>/<id>")]
-pub async fn delete_file(
-    db: Connection<SubscriptionsDb>,
-    id: i32,
-    upload_dir: &str,
-) -> io::Result<()> {
+pub async fn delete_file(id: i32, upload_dir: &str) -> io::Result<()> {
     let upload_type = UploadType::from_str(upload_dir)?;
-    upload_service::delete_file(db, upload_type, id).await
+    upload_service::delete_file(upload_type, id).await
 }
 
 #[cfg(test)]

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Form, Image, Input } from 'antd';
 
 import Brand from 'interfaces/brands/brand.interface';
@@ -29,19 +30,18 @@ const EditableCell: React.FC<EditableCellProps> = ({
   mode,
   ...restProps
 }) => {
-  const imagePath =
-    record === undefined
-      ? null
-      : mode === TableMode.Brand
-      ? (record as Brand).logo
-      : (record as Category).icon;
   const uploadDir = mode === TableMode.Brand ? 'brands/' : 'categories/';
   const uploadPath = import.meta.env.VITE_BASEURL + 'uploads/' + uploadDir;
+  const [error, setError] = useState(false);
+
+  const onError = () => {
+    setError(true);
+  };
 
   return (
     <td {...restProps}>
       {inputType === 'file' ? (
-        imagePath === null ? (
+        error ? (
           <UploadButton uploadPath={uploadPath + record.id} disabled={record.id === NEW_ELEM_ID} />
         ) : (
           <Image
@@ -49,6 +49,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
             preview={false}
             style={{ width: '48px', height: '48px', cursor: 'pointer' }}
             onClick={() => openModal(record.id)}
+            onError={onError}
           />
         )
       ) : editing ? (

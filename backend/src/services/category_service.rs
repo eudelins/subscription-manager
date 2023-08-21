@@ -46,10 +46,10 @@ pub async fn add_subscription_to_categories(
     Some(())
 }
 
-pub async fn update_category_icon(
-    db: Connection<SubscriptionsDb>,
-    id: i32,
-    icon_path: Option<&str>,
-) -> Option<()> {
-    category_repository::update_category_icon(db, id, icon_path).await
-}
+// pub async fn update_category_icon(
+//     db: Connection<SubscriptionsDb>,
+//     id: i32,
+//     icon_path: Option<&str>,
+// ) -> Option<()> {
+//     category_repository::update_category_icon(db, id, icon_path).await
+// }

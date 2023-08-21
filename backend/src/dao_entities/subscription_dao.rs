@@ -9,11 +9,6 @@ pub struct SubscriptionDAO {
     pub name: String,
     pub price: f32,
     pub status: bool,
-    pub logo: Option<String>,
-    pub subscribe_link: Option<String>,
-    pub unsubscribe_link: Option<String>,
-    pub start_date: Option<String>,
-    pub end_date: Option<String>,
 }
 
 impl From<SubscriptionDTO> for SubscriptionDAO {
@@ -24,11 +19,6 @@ impl From<SubscriptionDTO> for SubscriptionDAO {
             name: sub_dto.name,
             price: sub_dto.price,
             status: sub_dto.status,
-            logo: Option::None,
-            subscribe_link: Option::None,
-            unsubscribe_link: Option::None,
-            start_date: Option::None,
-            end_date: Option::None,
         }
     }
 }
@@ -41,11 +31,6 @@ impl From<CreateOrUpdateSubscriptionDTO> for SubscriptionDAO {
             name: new_sub_dto.name,
             price: new_sub_dto.price,
             status: new_sub_dto.status,
-            logo: Option::None,
-            subscribe_link: Option::None,
-            unsubscribe_link: Option::None,
-            start_date: Option::None,
-            end_date: Option::None,
         }
     }
 }

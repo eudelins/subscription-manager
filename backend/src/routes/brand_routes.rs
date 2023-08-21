@@ -62,7 +62,6 @@ mod test {
         let test_brand = brands.iter().find(|s| s.id == 1).unwrap();
         assert_eq!(test_brand.id, 1);
         assert_eq!(test_brand.name, "Amazon");
-        assert!(test_brand.logo.is_none());
     }
 
     #[test]
@@ -73,7 +72,6 @@ mod test {
 
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.name, "Amazon");
-        assert!(brand.logo.is_none());
     }
 
     #[test]
@@ -82,7 +80,6 @@ mod test {
         let new_brand = BrandDTO {
             id: -1,
             name: String::from("test_new_brand"),
-            logo: Option::None,
         };
         let response = client
             .post(uri!("/brands", super::create_brand))
@@ -93,13 +90,11 @@ mod test {
 
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.name, "test_new_brand");
-        assert!(brand.logo.is_none());
 
         let response = client.get(format!("/brands/{}", brand.id)).dispatch();
         assert_eq!(response.status(), Status::Ok);
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.name, "test_new_brand");
-        assert!(brand.logo.is_none());
 
         let response = client.delete(format!("/brands/{}", brand.id)).dispatch();
         assert_eq!(response.status(), Status::Ok);
@@ -113,7 +108,6 @@ mod test {
         let new_brand = BrandDTO {
             id: 1,
             name: String::from("test_update"),
-            logo: Option::None,
         };
         let response = client
             .put(uri!("/brands", super::update_brand))
@@ -123,7 +117,6 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.name, "test_update");
-        assert_eq!(brand.logo, Option::None);
 
         // Check with fetch
         let response = client.get(format!("/brands/{}", 1)).dispatch();
@@ -131,13 +124,11 @@ mod test {
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.id, 1);
         assert_eq!(brand.name, "test_update");
-        assert_eq!(brand.logo, Option::None);
 
         // Go back to as it was
         let original_sub = BrandDTO {
             id: 1,
             name: String::from("Amazon"),
-            logo: Option::None,
         };
         let response = client
             .put(uri!("/brands", super::update_brand))
@@ -152,6 +143,5 @@ mod test {
         let brand = response.into_json::<BrandDTO>().unwrap();
         assert_eq!(brand.id, 1);
         assert_eq!(brand.name, "Amazon");
-        assert_eq!(brand.logo, Option::None);
     }
 }

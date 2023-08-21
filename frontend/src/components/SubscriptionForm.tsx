@@ -91,7 +91,9 @@ function SubscriptionForm({ subscription, onFinish, isDisabled, style }: Props) 
       </Form.Item>
       {!subscription && (
         <Form.Item wrapperCol={{ offset: 13, span: 16 }}>
-          <Button shape='round' style={buttonStyle} htmlType="submit">Valider</Button>
+          <Button shape="round" style={buttonStyle} htmlType="submit">
+            Valider
+          </Button>
         </Form.Item>
       )}
     </Form>
