@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "env-cmd -f .env.dev vite",
     "prod": "env-cmd -f .env.production vite",
-    "build": "tsc && vite build",
+    "build": "tsc && env-cmd -f .env.production vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint \"**/*.{ts,tsx}\"",

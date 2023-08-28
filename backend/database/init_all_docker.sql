@@ -11,7 +11,7 @@ SELECT SESSION_USER, CURRENT_USER;
 
 CREATE TABLE Brands (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Subscriptions (
@@ -25,9 +25,8 @@ CREATE TABLE Subscriptions (
 
 CREATE TABLE Categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50) NOT NULL
 );
-
 
 -- Linking tables
 
@@ -37,7 +36,7 @@ CREATE TABLE Belongs_To_Categories (
     FOREIGN KEY (subscription_id) REFERENCES Subscriptions(id) ON DELETE CASCADE, 
     FOREIGN KEY (category_id) REFERENCES Categories(id) ON DELETE CASCADE,
     PRIMARY KEY (subscription_id, category_id)
-)
+);
 
 
 INSERT INTO Brands (name) VALUES
@@ -53,6 +52,11 @@ INSERT INTO Categories (name) VALUES
 ('Musique');
 
 INSERT INTO Subscriptions (brand_id, name, price, status) VALUES
-(1, 'Netflix (basic)', 10.1, false),
-(3, 'EDF (basic)', 50, false),
-(5, 'Free (basic)', 30, false);
+(1, 'Netflix (basic)', 10.1, true),
+(3, 'EDF (basic)', 50, true),
+(5, 'Free (basic)', 30, true);
+
+INSERT INTO Belongs_To_Categories (subscription_id, category_id) VALUES
+(1, 2),
+(2, 1),
+(3, 2);

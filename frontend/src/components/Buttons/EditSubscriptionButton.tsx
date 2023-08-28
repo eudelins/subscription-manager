@@ -6,9 +6,10 @@ import { EditOutlined } from '@ant-design/icons';
 interface Props {
   editMode: boolean;
   setEditMode: (editMode: boolean) => void;
+  submitRef?: any;
 }
 
-function EditSubscriptionButton({ editMode, setEditMode }: Props) {
+function EditSubscriptionButton({ editMode, setEditMode, submitRef }: Props) {
   const [openModal, setOpenModal] = useState(false);
 
   const handleButtonClick = () => {
@@ -20,7 +21,7 @@ function EditSubscriptionButton({ editMode, setEditMode }: Props) {
   };
 
   const handleModalConfirm = async () => {
-    // await editSubscription(subsToArchive);
+    submitRef.current.click();
     setOpenModal(false);
     setEditMode(false);
   };
