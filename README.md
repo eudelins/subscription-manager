@@ -1,74 +1,18 @@
-# subscription-manager
+# Subscription Manager
 
-## Database init
+This repo is a small web app, with a React frontend, a backend written in Rust (Rocket framework) and Postgres database. Its goal is to be able to track the money you spent on subscriptions (Netflix, Spotify...) each month. The fontend uses Tauri (the Rust "Electron"), so it can also be displayed as a desktop app. The Tauri part has not been dockerized.
 
-### Configure postgres to allow user local connection with a password
+It is a personnal project initially started improve my knowledge of Rust (and also React, but that was not the main goal).
 
-```bash
-sudo nano /etc/postgresql/14/main/pg_hba.conf
+Many things could be improved, but I was starting to get bored by the project so I decided to leave it like this.
 
-# Replace peer by scram-sha-256 :
-local   all             all                                     scram-sha-256
-```
+Here is what the application looks like:
 
+![home](screenshots/home.png)
+![home2](screenshots/home2.png)
+![data](screenshots/data.png)
+![manage](screenshots/manage.png)
 
-### Create a postgres user and the database
+## Run the project
 
-```bash
-sudo -u postgres createuser subscriptions_db_user -P -l
-# Enter the subscriptions_db_user password you want
-
-sudo -u postgres createdb subscriptions_db -O subscriptions_db_user
-sudo -u postgres createdb subscriptions_db_test -O subscriptions_db_user
-```
-
-
-### Write the created user password in a pass.pgpass file and the .env.production.db file
-
-```bash
-export PGPASSFILE=./backend/database/pass.pgpass
-echo "*:*:*:subscriptions_db_user:<password>" > $PGPASSFILE
-chmod 0600 $PGPASSFILE  # Restrict access write to the file
-
-echo "DB_USER_PASSWORD=<password>" > .env.production.db
-```
-
-
-### Run the initialization scripts with the created user
-
-```bash
-psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/init_table.sql
-psql -d subscriptions_db -U subscriptions_db_user -a -f ./backend/database/fill_db.sql
-
-psql -d subscriptions_db_test -U subscriptions_db_user -a -f ./backend/database/init_table.sql
-psql -d subscriptions_db_test -U subscriptions_db_user -a -f ./backend/database/fill_test_db.sql
-```
-<br>
-
-
-## Frontend init
-
-### Configure .env variables
-
-Create a file named .env.dev and write VITE_BASEURL = "http://localhost:8000/".
-
-
-### Linter
-
-Follow https://dev.to/knowankit/setup-eslint-and-prettier-in-react-app-357b
-
-Usage :
-
-```bash
-yarn lint
-yarn lint --fix
-```
-
-
-### Start frontend
-
-```bash
-cd frontend
-yarn install
-yarn run dev
-```
+See BUILD.md file for more instructions on how to run the project
