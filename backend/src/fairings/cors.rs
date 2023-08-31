@@ -16,10 +16,6 @@ impl Fairing for CORS {
     async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
         response.set_header(Header::new(
             "Access-Control-Allow-Origin",
-            "http://127.0.0.1:1420",
-        ));
-        response.set_header(Header::new(
-            "Access-Control-Allow-Origin",
             "http://localhost:1420",
         ));
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));

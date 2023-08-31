@@ -1,4 +1,4 @@
-import { useState, useEffect, CSSProperties } from 'react';
+import { useState, useEffect, CSSProperties, RefObject } from 'react';
 
 import { Button, Radio, Form, Input, Select, InputNumber } from 'antd';
 
@@ -13,9 +13,10 @@ interface Props {
   onFinish: (formValues: any) => void;
   isDisabled: boolean;
   style?: CSSProperties;
+  submitRef?: any;
 }
 
-function SubscriptionForm({ subscription, onFinish, isDisabled, style }: Props) {
+function SubscriptionForm({ subscription, onFinish, isDisabled, style, submitRef }: Props) {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -89,11 +90,15 @@ function SubscriptionForm({ subscription, onFinish, isDisabled, style }: Props) 
           })}
         />
       </Form.Item>
-      {!subscription && (
-        <Form.Item wrapperCol={{ offset: 13, span: 16 }}>
-          <Button shape='round' style={buttonStyle} htmlType="submit">Valider</Button>
-        </Form.Item>
-      )}
+      <Form.Item wrapperCol={{ offset: 13, span: 16 }}>
+        <Button
+          ref={submitRef}
+          shape="round"
+          style={{ ...buttonStyle, display: subscription ? 'none' : 'block' }}
+          htmlType="submit">
+          Valider
+        </Button>
+      </Form.Item>
     </Form>
   );
 }

@@ -11,6 +11,8 @@ services:
     ports:
       - "54320:5432"
     restart: always
+    networks:
+      - server-side
 
   api:
     build: ./backend
@@ -18,9 +20,27 @@ services:
       PGPASSFILE: /app/pass.pgpass
     ports:
       - "8000:8000"
+    volumes:
+       - ./backend/uploads:/app/uploads
     depends_on:
       - db
+    networks:
+      - client-side
+      - server-side
     restart: always
+
+  frontend:
+    build: ./frontend
+    ports:
+      - 1420:80
+    depends_on:
+      - api
+    networks:
+      - client-side
 
 volumes:
   database:
+
+networks:
+  client-side:
+  server-side:

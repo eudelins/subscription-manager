@@ -33,10 +33,10 @@ pub async fn delete_brand_by_id(db: Connection<SubscriptionsDb>, id: i32) -> Opt
     brand_repository::delete_brand_by_id(db, id).await
 }
 
-pub async fn update_brand_logo(
-    db: Connection<SubscriptionsDb>,
-    id: i32,
-    logo_path: Option<&str>,
-) -> Option<()> {
-    brand_repository::update_brand_logo(db, id, logo_path).await
-}
+// pub async fn update_brand_logo(
+//     db: Connection<SubscriptionsDb>,
+//     id: i32,
+//     logo_path: Option<&str>,
+// ) -> Option<()> {
+//     brand_repository::update_brand_logo(db, id, logo_path).await
+// }

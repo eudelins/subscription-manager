@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Row, Space } from 'antd';
@@ -20,6 +20,7 @@ function SubscriptionPage() {
   const [brand, setBrand] = useState<Brand>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
+  const submitRef = useRef();
 
   const loadSubscription = () => {
     getSubscriptionById(id).then((res) => {
@@ -61,7 +62,7 @@ function SubscriptionPage() {
       <Row justify="end">
         <Space size="middle" style={{ marginBottom: 32 }}>
           {subscription && editMode && <DeleteSubscriptionsButton subscription={subscription} />}
-          <EditSubscriptionButton editMode={editMode} setEditMode={setEditMode} />
+          <EditSubscriptionButton editMode={editMode} setEditMode={setEditMode} submitRef={submitRef} />
         </Space>
       </Row>
 
@@ -70,6 +71,7 @@ function SubscriptionPage() {
           subscription={subscription}
           onFinish={onEditFinish}
           isDisabled={!editMode}
+          submitRef={submitRef}
         />
       )}
     </>

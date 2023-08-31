@@ -93,7 +93,8 @@ function UpdateTable({ elements, mode, setBrands, setCategories }: Props) {
       mode === TableMode.Brand
         ? deleteBrandById(elements[index].id.toString())
         : deleteCategoryById(elements[index].id.toString());
-      const newElements = [...elements].splice(index, 1);
+      const newElements = [...elements];
+      newElements.splice(index, 1);
       setElements(newElements);
     }
   };

@@ -65,7 +65,6 @@ mod test {
         let test_category = categories.iter().find(|s| s.id == 1).unwrap();
         assert_eq!(test_category.id, 1);
         assert_eq!(test_category.name, "Divertissement");
-        assert!(test_category.icon.is_none());
     }
 
     #[test]
@@ -76,7 +75,6 @@ mod test {
 
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.name, "Divertissement");
-        assert!(category.icon.is_none());
     }
 
     #[test]
@@ -85,7 +83,6 @@ mod test {
         let new_category = CategoryDTO {
             id: -1,
             name: String::from("test_new_category"),
-            icon: Option::None,
         };
         let response = client
             .post(uri!("/categories", super::create_category))
@@ -96,7 +93,6 @@ mod test {
 
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.name, "test_new_category");
-        assert!(category.icon.is_none());
 
         let response = client
             .get(format!("/categories/{}", category.id))
@@ -104,7 +100,6 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.name, "test_new_category");
-        assert!(category.icon.is_none());
 
         let response = client
             .delete(format!("/categories/{}", category.id))
@@ -120,7 +115,6 @@ mod test {
         let new_category = CategoryDTO {
             id: 1,
             name: String::from("test_update"),
-            icon: Option::None,
         };
         let response = client
             .put(uri!("/categories", super::update_category))
@@ -130,7 +124,6 @@ mod test {
         assert_eq!(response.status(), Status::Ok);
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.name, "test_update");
-        assert_eq!(category.icon, Option::None);
 
         // Check with fetch
         let response = client.get(format!("/categories/{}", 1)).dispatch();
@@ -138,13 +131,11 @@ mod test {
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.id, 1);
         assert_eq!(category.name, "test_update");
-        assert_eq!(category.icon, Option::None);
 
         // Go back to as it was
         let original_sub = CategoryDTO {
             id: 1,
             name: String::from("Divertissement"),
-            icon: Option::None,
         };
         let response = client
             .put(uri!("/categories", super::update_category))
@@ -159,6 +150,5 @@ mod test {
         let category = response.into_json::<CategoryDTO>().unwrap();
         assert_eq!(category.id, 1);
         assert_eq!(category.name, "Divertissement");
-        assert_eq!(category.icon, Option::None);
     }
 }

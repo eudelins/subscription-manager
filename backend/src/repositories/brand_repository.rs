@@ -30,15 +30,13 @@ pub async fn create_or_update_brand<'a>(
     is_update: bool,
 ) -> Option<BrandDAO> {
     let query = if is_update {
-        sqlx::query("UPDATE Brands SET name=$2, logo=$3 WHERE id=$1 RETURNING *;")
-            .bind(new_brand.id)
+        sqlx::query("UPDATE Brands SET name=$2 WHERE id=$1 RETURNING *;").bind(new_brand.id)
     } else {
-        sqlx::query("INSERT INTO Brands (name, logo) VALUES ($1, $2) RETURNING *;")
+        sqlx::query("INSERT INTO Brands (name) VALUES ($1) RETURNING *;")
     };
 
     query
         .bind(new_brand.name)
-        .bind(new_brand.logo)
         .fetch_one(&mut *db)
         .await
         .and_then(|res| BrandDAO::from_row(&res))
@@ -57,18 +55,18 @@ pub async fn delete_brand_by_id(mut db: Connection<SubscriptionsDb>, id: i32) ->
         .map(|_| ())
 }
 
-pub async fn update_brand_logo<'a>(
-    mut db: Connection<SubscriptionsDb>,
-    id: i32,
-    logo_path: Option<&str>,
-) -> Option<()> {
-    let query = sqlx::query("UPDATE Brands SET logo=$2 WHERE id=$1 RETURNING *;");
-    query
-        .bind(id)
-        .bind(logo_path)
-        .fetch_one(&mut *db)
-        .await
-        .map(|_| ())
-        .map_err(|e| println!("Error: {:?}", e))
-        .ok()
-}
+// pub async fn update_brand_logo<'a>(
+//     mut db: Connection<SubscriptionsDb>,
+//     id: i32,
+//     logo_path: Option<&str>,
+// ) -> Option<()> {
+//     let query = sqlx::query("UPDATE Brands SET logo=$2 WHERE id=$1 RETURNING *;");
+//     query
+//         .bind(id)
+//         .bind(logo_path)
+//         .fetch_one(&mut *db)
+//         .await
+//         .map(|_| ())
+//         .map_err(|e| println!("Error: {:?}", e))
+//         .ok()
+// }

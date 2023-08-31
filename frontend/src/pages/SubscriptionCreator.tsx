@@ -19,7 +19,7 @@ function SubscriptionCreator() {
     }
   };
 
-  return <SubscriptionForm onFinish={onFinish} />;
+  return <SubscriptionForm isDisabled={false} onFinish={onFinish} />;
 }
 
 export default SubscriptionCreator;
