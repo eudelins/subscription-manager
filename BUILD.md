@@ -1,7 +1,15 @@
 # Building the app with Docker
 
 ```bash
+# Configure database passwords
+export PGPASSFILE=./backend/database/pass.pgpass
+echo "*:*:*:subscriptions_db_user:<password>" > $PGPASSFILE
+chmod 0600 $PGPASSFILE  # Restrict access write to the file
+echo "DB_USER_PASSWORD=<password>" > .env.production.db
+echo "POSTGRES_PASSWORD=<another_password>" >> .env.production.db
+
 docker-compose up -d  # Starts the app, could take several minutes on th first launch
+# You can access the app on http://localhost:1420/
 docker-compose down   # Stops the app
 ```
 
@@ -38,6 +46,7 @@ echo "*:*:*:subscriptions_db_user:<password>" > $PGPASSFILE
 chmod 0600 $PGPASSFILE  # Restrict access write to the file
 
 echo "DB_USER_PASSWORD=<password>" > .env.production.db
+echo "POSTGRES_PASSWORD=<another_password>" >> .env.production.db
 ```
 
 ### Run the initialization scripts with the created user
