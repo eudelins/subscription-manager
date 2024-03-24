@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DB_USER_PASSWORD: random_pass123*
+  POSTGRES_PASSWORD: random_pass1234*
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db-env-production-db
+  name: env-production-db
