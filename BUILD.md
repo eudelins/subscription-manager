@@ -8,9 +8,14 @@ chmod 0600 $PGPASSFILE  # Restrict access write to the file
 echo "DB_USER_PASSWORD=<password>" > .env.production.db
 echo "POSTGRES_PASSWORD=<another_password>" >> .env.production.db
 
-docker-compose up -d  # Starts the app, could take several minutes on th first launch
-# You can access the app on http://localhost:1420/
-docker-compose down   # Stops the app
+# Configure /etc/hosts
+sudo echo "<machine_ip>	subscription-manager" >> /etc/hosts
+
+# Start the app
+docker compose up -d  # Could take several minutes on th first launch
+                      # You can access the app on http://<machine_ip>:1420/
+
+docker compose down   # Stops the app
 ```
 
 <br />
