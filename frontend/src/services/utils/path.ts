@@ -1,9 +1,11 @@
-export const SUBSCRIPTIONS_API_PATH = import.meta.env.VITE_BASEURL + 'subscriptions/';
+export const API_BASE_PATH = `http://${window.location.host}/api/`;
 
-export const BRANDS_API_PATH = import.meta.env.VITE_BASEURL + 'brands/';
+export const SUBSCRIPTIONS_API_PATH = API_BASE_PATH + 'subscriptions/';
 
-export const DATAVIZ_API_PATH = import.meta.env.VITE_BASEURL + 'dataviz/';
+export const BRANDS_API_PATH = API_BASE_PATH + 'brands/';
 
-export const CATEGORIES_API_PATH = import.meta.env.VITE_BASEURL + 'categories/';
+export const DATAVIZ_API_PATH = API_BASE_PATH + 'dataviz/';
 
-export const UPLOADS_API_PATH = import.meta.env.VITE_BASEURL + 'uploads/';
+export const CATEGORIES_API_PATH = API_BASE_PATH + 'categories/';
+
+export const UPLOADS_API_PATH = API_BASE_PATH + 'uploads/';

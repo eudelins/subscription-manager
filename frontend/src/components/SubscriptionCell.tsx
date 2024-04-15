@@ -3,6 +3,7 @@ import { Card, Avatar, Checkbox } from 'antd';
 import Subscription from 'interfaces/subscriptions/subscription.interface';
 import { useNavigate } from 'react-router-dom';
 import { SUBSCRIPTION_PAGE_ROUTE } from 'routes/routes';
+import { API_BASE_PATH } from 'services/utils/path';
 
 const LOGO_SIZE = 80;
 
@@ -38,7 +39,7 @@ function SubscriptionCell({ subscription, changeStatusMode, onStatusUpdate }: Pr
         {subscription && (
           <Avatar
             size={LOGO_SIZE}
-            src={import.meta.env.VITE_BASEURL + 'uploads/brands/' + subscription.brandId}
+            src={API_BASE_PATH + 'uploads/brands/' + subscription.brandId}
             alt="logo"
           />
         )}

@@ -3,6 +3,7 @@ import { Button, Image, Modal, Space, message } from 'antd';
 import { TableMode } from 'components/UpdateTable/UpdateTable';
 import UploadButton from 'components/UpdateTable/UploadButton';
 import { deleteFile } from 'services/uploads';
+import { API_BASE_PATH } from 'services/utils/path';
 
 interface Props {
   isModalOpen: boolean;
@@ -13,7 +14,7 @@ interface Props {
 
 const ImageModal = ({ isModalOpen, elemId, setIsModalOpen, mode }: Props) => {
   const uploadDir = mode === TableMode.Brand ? 'brands/' : 'categories/';
-  const uploadPath = import.meta.env.VITE_BASEURL + 'uploads/' + uploadDir;
+  const uploadPath = API_BASE_PATH + 'uploads/' + uploadDir;
 
   const deleteElemFile = async () => {
     let success = await deleteFile(uploadDir + elemId);

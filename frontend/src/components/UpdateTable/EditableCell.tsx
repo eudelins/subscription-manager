@@ -5,6 +5,7 @@ import Brand from 'interfaces/brands/brand.interface';
 import Category from 'interfaces/categories/category.interface';
 import { NEW_ELEM_ID, TableMode } from 'components/UpdateTable/UpdateTable';
 import UploadButton from './UploadButton';
+import { API_BASE_PATH } from 'services/utils/path';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -31,7 +32,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
   ...restProps
 }) => {
   const uploadDir = mode === TableMode.Brand ? 'brands/' : 'categories/';
-  const uploadPath = import.meta.env.VITE_BASEURL + 'uploads/' + uploadDir;
+  const uploadPath = API_BASE_PATH + 'uploads/' + uploadDir;
   const [error, setError] = useState(false);
 
   const onError = () => {
