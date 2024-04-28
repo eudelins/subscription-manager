@@ -1,10 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: ../kompose convert
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
   labels:
     io.kompose.service: db
   name: db
@@ -17,26 +13,15 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: ../kompose convert
-        kompose.version: 1.26.0 (40646f47)
-      creationTimestamp: null
       labels:
-        io.kompose.network/server-side: "true"
         io.kompose.service: db
     spec:
       containers:
         - env:
             - name: DB_USER_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  key: DB_USER_PASSWORD
-                  name: env-production-db
+              value: random_pass123*
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  key: POSTGRES_PASSWORD
-                  name: env-production-db
+              value: random_pass1234*
           image: postgres:14.7
           name: db
           ports:
@@ -45,7 +30,7 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: database
-            - mountPath: /docker-entrypoint-initdb.d/init.sql
+            - mountPath: /docker-entrypoint-initdb.d
               name: db-claim1
       restartPolicy: Always
       volumes:
@@ -53,6 +38,6 @@ spec:
           persistentVolumeClaim:
             claimName: database
         - name: db-claim1
-          persistentVolumeClaim:
-            claimName: db-claim1
+          configMap:
+            name: db-configmap
 status: {}

@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+  init.sql: "\\set db_user_password `echo \"$DB_USER_PASSWORD\"`\nCREATE USER subscriptions_db_user
+    WITH ENCRYPTED PASSWORD :'db_user_password';\nCREATE DATABASE subscriptions_db
+    WITH OWNER subscriptions_db_user;\nGRANT ALL PRIVILEGES ON DATABASE subscriptions_db
+    TO subscriptions_db_user;\n\\c subscriptions_db;\nSET SESSION AUTHORIZATION subscriptions_db_user;\nSELECT
+    SESSION_USER, CURRENT_USER;\n\n\n-- Main tables\n\nCREATE TABLE Brands (\n    id
+    SERIAL PRIMARY KEY,\n    name VARCHAR(50) NOT NULL\n);\n\nCREATE TABLE Subscriptions
+    (\n    id SERIAL PRIMARY KEY,\n    brand_id SERIAL NOT NULL,\n    name VARCHAR(50)
+    NOT NULL,\n    price REAL NOT NULL,\n    status BOOLEAN NOT NULL,\n    FOREIGN
+    KEY (brand_id) REFERENCES Brands(id) ON DELETE RESTRICT\n);\n\nCREATE TABLE Categories
+    (\n    id SERIAL PRIMARY KEY,\n    name VARCHAR(50) NOT NULL\n);\n\n-- Linking
+    tables\n\nCREATE TABLE Belongs_To_Categories (\n    subscription_id SERIAL,\n
+    \   category_id SERIAL,\n    FOREIGN KEY (subscription_id) REFERENCES Subscriptions(id)
+    ON DELETE CASCADE, \n    FOREIGN KEY (category_id) REFERENCES Categories(id) ON
+    DELETE CASCADE,\n    PRIMARY KEY (subscription_id, category_id)\n);\n\n\nINSERT
+    INTO Brands (name) VALUES\n('Netflix'),\n('Amazon'),\n('EDF'),\n('Spotify'),\n('Free');\n\nINSERT
+    INTO Categories (name) VALUES\n('Energie'),\n('Divertissement'),\n('Musique');\n\nINSERT
+    INTO Subscriptions (brand_id, name, price, status) VALUES\n(1, 'Netflix (basic)',
+    10.1, true),\n(3, 'EDF (basic)', 50, true),\n(5, 'Free (basic)', 30, true);\n\nINSERT
+    INTO Belongs_To_Categories (subscription_id, category_id) VALUES\n(1, 2),\n(2,
+    1),\n(3, 2);\n"
+kind: ConfigMap
+metadata:
+  name: db-configmap
+  labels:
+    io.kompose.service: db-configmap

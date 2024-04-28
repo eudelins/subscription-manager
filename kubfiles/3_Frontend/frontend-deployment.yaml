@@ -1,10 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: ../kompose convert
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
   labels:
     io.kompose.service: frontend
   name: frontend
@@ -16,19 +12,16 @@ spec:
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: ../kompose convert
-        kompose.version: 1.26.0 (40646f47)
-      creationTimestamp: null
       labels:
-        io.kompose.network/client-side: "true"
         io.kompose.service: frontend
     spec:
       containers:
-        - image: frontend
+        - image: ghcr.io/eudelins/subscription-manager-frontend:1.0.0
           name: frontend
           ports:
             - containerPort: 80
           resources: {}
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
 status: {}

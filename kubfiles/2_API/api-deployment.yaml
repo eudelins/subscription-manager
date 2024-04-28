@@ -1,10 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: ../kompose convert
-    kompose.version: 1.26.0 (40646f47)
-  creationTimestamp: null
   labels:
     io.kompose.service: api
   name: api
@@ -17,20 +13,14 @@ spec:
     type: Recreate
   template:
     metadata:
-      annotations:
-        kompose.cmd: ../kompose convert
-        kompose.version: 1.26.0 (40646f47)
-      creationTimestamp: null
       labels:
-        io.kompose.network/client-side: "true"
-        io.kompose.network/server-side: "true"
         io.kompose.service: api
     spec:
       containers:
         - env:
             - name: PGPASSFILE
               value: /app/pass.pgpass
-          image: api
+          image: ghcr.io/eudelins/subscription-manager-api:1.0.0
           name: api
           ports:
             - containerPort: 8000
@@ -38,6 +28,8 @@ spec:
           volumeMounts:
             - mountPath: /app/uploads
               name: api-claim0
+      imagePullSecrets:
+        - name: regcred
       restartPolicy: Always
       volumes:
         - name: api-claim0
